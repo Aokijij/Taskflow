@@ -62,6 +62,7 @@ const Navbar = () => {
     declineInvitation,
   } = useTasks();
   const [readNotifications, setReadNotifications] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const unreadNotifications = useMemo(() => {
     const pendingNotifications = [...groupedTasks.overdue, ...groupedTasks.upcoming].sort((a, b) =>
@@ -76,6 +77,7 @@ const Navbar = () => {
     setReadNotifications((current) =>
       current.includes(taskId) ? current : [...current, taskId]
     );
+    setIsMenuOpen(false);
     navigate(`/task/${taskId}`);
   };
 
@@ -116,20 +118,30 @@ const Navbar = () => {
   };
 
   return (
-    <aside className="dashboard-sidebar">
+    <aside className={`dashboard-sidebar ${isMenuOpen ? "dashboard-sidebar--open" : ""}`}>
       <div className="sidebar-brand">
         <img src="/icon.jpg" alt="TaskFlow" />
         <div>
           <strong>TaskFlow</strong>
           <span>Workspace</span>
         </div>
+        <button
+          type="button"
+          className="sidebar-toggle"
+          aria-label={isMenuOpen ? "Cerrar menu" : "Abrir menu"}
+          onClick={() => setIsMenuOpen((current) => !current)}
+        >
+          <i className={`bi ${isMenuOpen ? "bi-x-lg" : "bi-list"}`}></i>
+        </button>
       </div>
 
+      <div className="sidebar-collapsible">
       <nav className="sidebar-nav" aria-label="Navegacion principal">
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
+            onClick={() => setIsMenuOpen(false)}
             className={`sidebar-nav__item ${
               location.pathname === item.path ? "sidebar-nav__item--active" : ""
             }`}
@@ -150,7 +162,10 @@ const Navbar = () => {
           className={`sidebar-workspace ${
             activeWorkspace.type === "personal" ? "sidebar-workspace--active" : ""
           }`}
-          onClick={() => setActiveWorkspace(personalWorkspace)}
+          onClick={() => {
+            setActiveWorkspace(personalWorkspace);
+            setIsMenuOpen(false);
+          }}
         >
           <i className="bi bi-person"></i>
           <span>Mis tareas</span>
@@ -162,7 +177,10 @@ const Navbar = () => {
             className={`sidebar-workspace ${
               activeWorkspace.id === group.id ? "sidebar-workspace--active" : ""
             }`}
-            onClick={() => setActiveWorkspace(group)}
+            onClick={() => {
+              setActiveWorkspace(group);
+              setIsMenuOpen(false);
+            }}
           >
             <i className="bi bi-people"></i>
             <span>{group.name}</span>
@@ -253,7 +271,14 @@ const Navbar = () => {
       </section>
 
       <div className="sidebar-user">
-        <button type="button" className="sidebar-user__profile" onClick={() => navigate("/profile")}>
+        <button
+          type="button"
+          className="sidebar-user__profile"
+          onClick={() => {
+            setIsMenuOpen(false);
+            navigate("/profile");
+          }}
+        >
           <img src={resolveUserAvatar(profile, user)} alt="User avatar" />
           <span>
             <strong>{profile?.name || "Mi perfil"}</strong>
@@ -263,6 +288,7 @@ const Navbar = () => {
         <button type="button" className="sidebar-user__logout" onClick={handleLogout}>
           <i className="bi bi-box-arrow-right"></i>
         </button>
+      </div>
       </div>
     </aside>
   );

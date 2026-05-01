@@ -38,5 +38,19 @@
 }
 
 .scroll-panel {
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .task-table {
+    min-width: 760px;
+  }
+
+  .task-table th,
+  .task-table td {
+    padding: 14px 16px;
+  }
 }

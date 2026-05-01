@@ -37,6 +37,9 @@ function Groups() {
   const activeMembers = activeGroup?.members.filter((member) => member.status === "active") || [];
   const invitedMembers = activeGroup?.members.filter((member) => member.status === "invited") || [];
   const joinRequests = activeGroup?.members.filter((member) => member.status === "requested") || [];
+  const currentMembership = activeGroup?.members.find(
+    (member) => member.userId === user?.id && member.status === "active"
+  );
 
   const handleCreateGroup = async (event) => {
     event.preventDefault();
@@ -139,6 +142,45 @@ function Groups() {
         });
       } catch (error) {
         toast.error(error.message || "No se pudo eliminar el grupo.", {
+          position: "top-right",
+          autoClose: 3000,
+          className: "taskflow-toast",
+        });
+      } finally {
+        setSaving(false);
+      }
+    });
+  };
+
+  const handleLeaveGroup = () => {
+    if (!activeGroup || !currentMembership || isOwner) return;
+
+    Swal.fire({
+      title: "Salir del grupo",
+      text: "Dejaras de ver las tareas y el calendario de este grupo.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Salir",
+      cancelButtonText: "Cancelar",
+      customClass: {
+        popup: "taskflow-alert",
+        confirmButton: "taskflow-alert__confirm",
+        cancelButton: "taskflow-alert__cancel",
+      },
+      buttonsStyling: false,
+    }).then(async (result) => {
+      if (!result.isConfirmed) return;
+
+      try {
+        setSaving(true);
+        await removeMember(currentMembership.id);
+        toast.success("Saliste del grupo.", {
+          position: "top-right",
+          autoClose: 2200,
+          className: "taskflow-toast",
+        });
+      } catch (error) {
+        toast.error(error.message || "No se pudo salir del grupo.", {
           position: "top-right",
           autoClose: 3000,
           className: "taskflow-toast",
@@ -420,6 +462,12 @@ function Groups() {
                         Eliminar grupo
                       </button>
                     </>
+                  )}
+
+                  {!isOwner && currentMembership && (
+                    <button type="button" className="soft-button soft-button--danger" onClick={handleLeaveGroup}>
+                      Salir del grupo
+                    </button>
                   )}
 
                   <div className="group-section-list">

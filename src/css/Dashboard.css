@@ -30,6 +30,7 @@ body {
     radial-gradient(circle at 85% 20%, rgba(20, 184, 166, 0.16), transparent 22%),
     linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
   color: var(--text);
+  overflow-x: hidden;
 }
 
 a {
@@ -58,6 +59,25 @@ a {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
+}
+
+.sidebar-collapsible {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  margin-left: auto;
+  border: 0;
+  border-radius: 14px;
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.09);
 }
 
 .sidebar-brand {
@@ -453,6 +473,8 @@ a {
   margin-left: 292px;
   min-height: 100vh;
   padding: 28px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .dashboard-topbar {
@@ -813,6 +835,7 @@ a {
 }
 
 .surface-card {
+  min-width: 0;
   background: var(--surface);
   backdrop-filter: blur(18px);
   border: 1px solid var(--line);
@@ -1456,6 +1479,12 @@ a {
   backdrop-filter: blur(20px);
 }
 
+.taskflow-modal {
+  max-width: min(560px, calc(100vw - 24px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .taskflow-modal .modal-header,
 .taskflow-modal .modal-footer {
   border: 0;
@@ -1842,6 +1871,23 @@ a {
     border-radius: 0 0 28px 28px;
   }
 
+  .sidebar-brand {
+    position: relative;
+  }
+
+  .sidebar-toggle {
+    display: grid;
+    place-items: center;
+  }
+
+  .sidebar-collapsible {
+    display: none;
+  }
+
+  .dashboard-sidebar--open .sidebar-collapsible {
+    display: flex;
+  }
+
   .dashboard-page {
     margin-left: 0;
     padding: 20px;
@@ -1912,6 +1958,20 @@ a {
 
   .dashboard-page {
     padding: 16px;
+  }
+
+  .surface-card__body {
+    padding: 20px;
+  }
+
+  .dashboard-grid,
+  .dashboard-grid--main {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .taskflow-modal {
+    max-width: calc(100vw - 18px);
   }
 
 }
