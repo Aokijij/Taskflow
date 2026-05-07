@@ -16,10 +16,15 @@ function AddTaskModal({
   onSubmit,
   submitting,
   categories = [],
+  categoriesMeta = [],
   workspace,
   assignableMembers = [],
 }) {
   const [formData, setFormData] = useState(initialState);
+  const inactiveMap = categoriesMeta.reduce((accumulator, category) => {
+    accumulator[category.name] = !category.active;
+    return accumulator;
+  }, {});
   const filteredCategories = categories.filter((category) =>
     category.toLowerCase().includes(formData.category.toLowerCase())
   );
@@ -61,12 +66,12 @@ function AddTaskModal({
 
           <Form.Group controlId="taskName" className="mb-3">
             <Form.Label>
-              <i className="bi bi-card-text me-2"></i>T&iacute;tulo
+              <i className="bi bi-card-text me-2"></i>Titulo
             </Form.Label>
             <Form.Control
               type="text"
               name="name"
-              placeholder="Ingresa el t&iacute;tulo de la tarea"
+              placeholder="Ingresa el titulo de la tarea"
               value={formData.name}
               onChange={handleChange}
               required
@@ -88,12 +93,12 @@ function AddTaskModal({
 
           <Form.Group controlId="category" className="mb-3">
             <Form.Label>
-              <i className="bi bi-tags me-2"></i>Categor&iacute;a
+              <i className="bi bi-tags me-2"></i>Categoria
             </Form.Label>
             <Form.Control
               list="task-category-options"
               name="category"
-              placeholder="Selecciona o escribe una categor&iacute;a"
+              placeholder="Selecciona o escribe una categoria"
               value={formData.category}
               onChange={handleChange}
               required
@@ -109,7 +114,9 @@ function AddTaskModal({
                   <button
                     key={category}
                     type="button"
-                    className="category-suggestion"
+                    className={`category-suggestion ${
+                      inactiveMap[category] ? "category-suggestion--inactive" : ""
+                    }`}
                     onClick={() =>
                       setFormData((current) => ({
                         ...current,
@@ -118,6 +125,7 @@ function AddTaskModal({
                     }
                   >
                     {category}
+                    {inactiveMap[category]}
                   </button>
                 ))}
               </div>
@@ -128,11 +136,7 @@ function AddTaskModal({
             <Form.Label>
               <i className="bi bi-flag me-2"></i>Prioridad
             </Form.Label>
-            <Form.Select
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
-            >
+            <Form.Select name="priority" value={formData.priority} onChange={handleChange}>
               <option value="Baja">Baja</option>
               <option value="Media">Media</option>
               <option value="Alta">Alta</option>
@@ -144,11 +148,7 @@ function AddTaskModal({
               <Form.Label>
                 <i className="bi bi-person-plus me-2"></i>Asignar a
               </Form.Label>
-              <Form.Select
-                name="assignedTo"
-                value={formData.assignedTo}
-                onChange={handleChange}
-              >
+              <Form.Select name="assignedTo" value={formData.assignedTo} onChange={handleChange}>
                 <option value="">Sin asignar</option>
                 {assignableMembers.map((member) => (
                   <option key={member.id || member.email} value={member.userId || ""}>
@@ -162,7 +162,7 @@ function AddTaskModal({
 
           <Form.Group controlId="taskDescription" className="mb-3">
             <Form.Label>
-              <i className="bi bi-textarea-t me-2"></i>Descripci&oacute;n
+              <i className="bi bi-textarea-t me-2"></i>Descripcion
             </Form.Label>
             <Form.Control
               as="textarea"

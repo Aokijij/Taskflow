@@ -1,6 +1,7 @@
 import { supabase } from "../../lib/supabaseClient";
 import {
   formatActivityRecord,
+  formatCategoryRecord,
   formatGroupRecord,
   formatInvitationRecord,
   formatTaskRecord,
@@ -43,6 +44,7 @@ const groupSelect = `
   owner_id,
   name,
   code,
+  color,
   created_at,
   updated_at,
   group_members (
@@ -67,6 +69,17 @@ const activitySelect = `
   created_at
 `;
 
+const categorySelect = `
+  id,
+  user_id,
+  scope,
+  group_id,
+  name,
+  active,
+  created_at,
+  updated_at
+`;
+
 const invitationSelect = `
   id,
   group_id,
@@ -79,7 +92,8 @@ const invitationSelect = `
     id,
     owner_id,
     name,
-    code
+    code,
+    color
   )
 `;
 
@@ -104,6 +118,173 @@ const throwReadableError = (error, fallback) => {
 };
 
 export class SupabaseTaskRepository {
+  async ensureCategory(workspace, categoryName, fallbackUserId) {
+    const normalizedName = categoryName?.trim();
+    if (!normalizedName) {
+      return null;
+    }
+
+    const query = supabase
+      .from("task_categories")
+      .select(categorySelect)
+      .eq("scope", workspace.scope)
+      .eq("name", normalizedName);
+
+    const scopedQuery =
+      workspace.scope === "group" && workspace.groupId
+        ? query.eq("group_id", workspace.groupId)
+        : query.eq("user_id", fallbackUserId).is("group_id", null);
+
+    const { data: existing } = await scopedQuery.maybeSingle();
+
+    if (existing) {
+      if (!existing.active) {
+        const { data: reactivated, error: reactivateError } = await supabase
+          .from("task_categories")
+          .update({ active: true })
+          .eq("id", existing.id)
+          .select(categorySelect)
+          .single();
+
+        if (reactivateError) {
+          throwReadableError(reactivateError, "No se pudo reactivar la categoria.");
+        }
+
+        return formatCategoryRecord(reactivated);
+      }
+
+      return formatCategoryRecord(existing);
+    }
+
+    const { data, error } = await supabase
+      .from("task_categories")
+      .insert({
+        user_id: fallbackUserId,
+        scope: workspace.scope,
+        group_id: workspace.groupId,
+        name: normalizedName,
+        active: true,
+      })
+      .select(categorySelect)
+      .single();
+
+    if (error) {
+      throwReadableError(error, "No se pudo guardar la categoria.");
+    }
+
+    return formatCategoryRecord(data);
+  }
+
+  async syncCategoryActivity(workspace, categoryName, fallbackUserId) {
+    const normalizedName = categoryName?.trim();
+    if (!normalizedName) {
+      return;
+    }
+
+    const countQuery = supabase
+      .from("tasks")
+      .select("id", { count: "exact", head: true })
+      .eq("category", normalizedName)
+      .eq("scope", workspace.scope);
+
+    const scopedCountQuery =
+      workspace.scope === "group" && workspace.groupId
+        ? countQuery.eq("group_id", workspace.groupId)
+        : countQuery.eq("user_id", fallbackUserId).is("group_id", null);
+
+    const { count, error: countError } = await scopedCountQuery;
+
+    if (countError) {
+      throwReadableError(countError, "No se pudo revisar la categoria.");
+    }
+
+    const categoryQuery = supabase
+      .from("task_categories")
+      .select(categorySelect)
+      .eq("scope", workspace.scope)
+      .eq("name", normalizedName);
+
+    const scopedCategoryQuery =
+      workspace.scope === "group" && workspace.groupId
+        ? categoryQuery.eq("group_id", workspace.groupId)
+        : categoryQuery.eq("user_id", fallbackUserId).is("group_id", null);
+
+    const { data: category } = await scopedCategoryQuery.maybeSingle();
+
+    if (!category) {
+      return;
+    }
+
+    const shouldBeActive = Number(count) > 0;
+
+    if (category.active !== shouldBeActive) {
+      const { error: updateError } = await supabase
+        .from("task_categories")
+        .update({ active: shouldBeActive })
+        .eq("id", category.id);
+
+      if (updateError) {
+        throwReadableError(updateError, "No se pudo actualizar el estado de la categoria.");
+      }
+    }
+  }
+
+  async getCategories() {
+    const { data, error } = await supabase
+      .from("task_categories")
+      .select(categorySelect)
+      .order("name", { ascending: true });
+
+    if (error) {
+      if (isMissingSchemaError(error)) {
+        return [];
+      }
+
+      throwReadableError(error, "No se pudieron cargar las categorias.");
+    }
+
+    return (data || []).map(formatCategoryRecord);
+  }
+
+  async deleteCategory(categoryId) {
+    const { data: category, error: categoryError } = await supabase
+      .from("task_categories")
+      .select(categorySelect)
+      .eq("id", categoryId)
+      .single();
+
+    if (categoryError) {
+      throwReadableError(categoryError, "No se encontro la categoria.");
+    }
+
+    const countQuery = supabase
+      .from("tasks")
+      .select("id", { count: "exact", head: true })
+      .eq("category", category.name)
+      .eq("scope", category.scope);
+
+    const scopedCountQuery =
+      category.scope === "group" && category.group_id
+        ? countQuery.eq("group_id", category.group_id)
+        : countQuery.eq("user_id", category.user_id).is("group_id", null);
+
+    const { count, error: countError } = await scopedCountQuery;
+
+    if (countError) {
+      throwReadableError(countError, "No se pudo validar la categoria.");
+    }
+
+    if (Number(count) > 0) {
+      throw new Error("Solo puedes eliminar una categoria sin tareas relacionadas.");
+    }
+
+    const { error } = await supabase.from("task_categories").delete().eq("id", categoryId);
+
+    if (error) {
+      throwReadableError(error, "No se pudo eliminar la categoria.");
+    }
+  }
+
   async getAll() {
     const response = await supabase
       .from("tasks")
@@ -160,6 +341,15 @@ export class SupabaseTaskRepository {
 
   async create(userId, task, actorEmail = "") {
     const isGroupTask = task.scope === "group" && task.groupId;
+    await this.ensureCategory(
+      {
+        scope: isGroupTask ? "group" : "personal",
+        groupId: isGroupTask ? task.groupId : null,
+      },
+      task.category,
+      userId
+    );
+
     const payload = {
       user_id: userId,
       scope: isGroupTask ? "group" : "personal",
@@ -226,6 +416,7 @@ export class SupabaseTaskRepository {
   }
 
   async update(taskId, updates, actorId, actorEmail = "", action = "updated") {
+    const existingTask = await this.getById(taskId);
     const payload = {
       name: updates.name,
       description: updates.description,
@@ -272,6 +463,26 @@ export class SupabaseTaskRepository {
 
     const data = response.data;
 
+    await this.ensureCategory(
+      {
+        scope: data.scope || "personal",
+        groupId: data.group_id,
+      },
+      updates.category,
+      data.user_id
+    );
+
+    if (existingTask.category !== updates.category) {
+      await this.syncCategoryActivity(
+        {
+          scope: existingTask.scope || "personal",
+          groupId: existingTask.groupId,
+        },
+        existingTask.category,
+        existingTask.userId
+      );
+    }
+
     await this.addActivity({
       taskId,
       groupId: data.group_id,
@@ -285,11 +496,21 @@ export class SupabaseTaskRepository {
   }
 
   async remove(taskId) {
+    const existingTask = await this.getById(taskId);
     const { error } = await supabase.from("tasks").delete().eq("id", taskId);
 
     if (error) {
       throwReadableError(error, "No se pudo eliminar la tarea.");
     }
+
+    await this.syncCategoryActivity(
+      {
+        scope: existingTask.scope || "personal",
+        groupId: existingTask.groupId,
+      },
+      existingTask.category,
+      existingTask.userId
+    );
 
     return taskId;
   }
@@ -318,7 +539,7 @@ export class SupabaseTaskRepository {
       );
   }
 
-  async createGroup(userId, userEmail, name) {
+  async createGroup(userId, userEmail, name, color = "#2563eb") {
     const currentGroups = await this.getGroups();
     if (currentGroups.length >= 5) {
       throw new Error("Solo puedes estar en maximo 5 grupos.");
@@ -331,6 +552,7 @@ export class SupabaseTaskRepository {
         owner_id: userId,
         name,
         code,
+        color,
       })
       .select(groupSelect)
       .single();
@@ -359,10 +581,16 @@ export class SupabaseTaskRepository {
     return this.getGroupById(data.id);
   }
 
-  async updateGroup(groupId, name) {
+  async updateGroup(groupId, name, color) {
+    const payload = { name };
+
+    if (color) {
+      payload.color = color;
+    }
+
     const { data, error } = await supabase
       .from("task_groups")
-      .update({ name })
+      .update(payload)
       .eq("id", groupId)
       .select(groupSelect)
       .single();

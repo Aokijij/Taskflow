@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,11 +7,7 @@ import AddTaskModal from "../components/AddTaskModal";
 import EditTaskModal from "../components/EditTaskModal";
 import { useAuth } from "../contexts/AuthContext";
 import { useTasks } from "../contexts/TaskContext";
-import {
-  getTaskCategories,
-  getTaskStatus,
-  isRecentlyCompleted,
-} from "../utils/taskHelpers";
+import { getTaskCategories, getTaskStatus, isRecentlyCompleted } from "../utils/taskHelpers";
 import "../css/Task.css";
 
 const priorityOptions = ["Todas", "Alta", "Media", "Baja"];
@@ -41,9 +37,11 @@ const getStatusTone = (status) => {
 
 function Task() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { profile } = useAuth();
   const {
     tasks,
+    categories,
     groups,
     activeWorkspace,
     summary,
@@ -63,11 +61,21 @@ function Task() {
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [priorityFilter, setPriorityFilter] = useState("Todas");
 
-  const categories = useMemo(() => getTaskCategories(tasks), [tasks]);
+  const categoryNames = useMemo(() => getTaskCategories(categories), [categories]);
   const activeGroup = useMemo(
     () => groups.find((group) => group.id === activeWorkspace.id),
     [activeWorkspace.id, groups]
   );
+
+  useEffect(() => {
+    const nextCategory = searchParams.get("category");
+    const nextStatus = searchParams.get("status");
+    const nextPriority = searchParams.get("priority");
+
+    setCategoryFilter(nextCategory || "Todas");
+    setStatusFilter(nextStatus || "Todos");
+    setPriorityFilter(nextPriority || "Todas");
+  }, [searchParams]);
 
   const visibleTasks = useMemo(() => {
     let nextTasks = tasks.filter((task) => !task.completed || isRecentlyCompleted(task, 7));
@@ -91,6 +99,30 @@ function Task() {
     () => groupedTasks.overdue[0] || groupedTasks.upcoming[0],
     [groupedTasks]
   );
+
+  const updateFiltersInUrl = ({ category, status, priority }) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (category && category !== "Todas") {
+      nextParams.set("category", category);
+    } else {
+      nextParams.delete("category");
+    }
+
+    if (status && status !== "Todos") {
+      nextParams.set("status", status);
+    } else {
+      nextParams.delete("status");
+    }
+
+    if (priority && priority !== "Todas") {
+      nextParams.set("priority", priority);
+    } else {
+      nextParams.delete("priority");
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  };
 
   const getTaskWorkspaceLabel = (task) => {
     if (task.scope !== "group") {
@@ -212,18 +244,56 @@ function Task() {
 
       <div className="dashboard-grid dashboard-grid--stats">
         {[
-          { label: "Total", value: summary.total, note: "tareas registradas" },
-          { label: "Pendientes", value: summary.pending, note: "listas para avanzar" },
-          { label: "Atrasadas", value: summary.overdue, note: "requieren atencion" },
-          { label: "Alta prioridad", value: summary.highPriority, note: "impacto alto" },
+          {
+            label: "Total",
+            value: summary.total,
+            note: "tareas registradas",
+            icon: "bi-check2-square",
+            tone: "primary",
+            onClick: null,
+          },
+          {
+            label: "Pendientes",
+            value: summary.pending,
+            note: "listas para avanzar",
+            icon: "bi-hourglass-split",
+            tone: "warning",
+            onClick: () => navigate("/task-status?status=Pendientes"),
+          },
+          {
+            label: "Atrasadas",
+            value: summary.overdue,
+            note: "requieren atencion",
+            icon: "bi-exclamation-octagon",
+            tone: "danger",
+            onClick: () => navigate("/task-status?status=Atrasadas"),
+          },
+          {
+            label: "Completadas",
+            value: summary.completed,
+            note: "cierres recientes",
+            icon: "bi-check2-circle",
+            tone: "success",
+            onClick: () => navigate("/task-status?status=Completadas"),
+          },
         ].map((metric) => (
-          <div key={metric.label} className="surface-card metric-card">
+          <button
+            key={metric.label}
+            type="button"
+            className={`surface-card metric-card metric-card--${metric.tone} ${
+              metric.onClick ? "metric-card--interactive" : ""
+            }`}
+            onClick={metric.onClick || undefined}
+          >
             <div className="surface-card__body">
+              <div className="metric-card__icon">
+                <i className={`bi ${metric.icon}`}></i>
+              </div>
               <div className="metric-card__label">{metric.label}</div>
               <div className="metric-card__value">{metric.value}</div>
               <div className="metric-card__note">{metric.note}</div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -236,40 +306,67 @@ function Task() {
                 <p>Tareas activas y completadas recientes con acciones rapidas.</p>
               </div>
               <div className="board-filter-bar">
-                <select
-                  className="form-select"
-                  value={categoryFilter}
-                  onChange={(event) => setCategoryFilter(event.target.value)}
-                >
-                  <option value="Todas">Todas las categorias</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  className="form-select"
-                  value={statusFilter}
-                  onChange={(event) => setStatusFilter(event.target.value)}
-                >
-                  {statusOptions.map((status) => (
-                    <option key={status} value={status}>
-                      {status === "Todos" ? "Todos los estados" : status}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  className="form-select"
-                  value={priorityFilter}
-                  onChange={(event) => setPriorityFilter(event.target.value)}
-                >
-                  {priorityOptions.map((priority) => (
-                    <option key={priority} value={priority}>
-                      {priority === "Todas" ? "Todas las prioridades" : priority}
-                    </option>
-                  ))}
-                </select>
+                <div className="taskflow-select-shell">
+                  <i className="bi bi-tags"></i>
+                  <select
+                    className="form-select"
+                    value={categoryFilter}
+                    onChange={(event) =>
+                      updateFiltersInUrl({
+                        category: event.target.value,
+                        status: statusFilter,
+                        priority: priorityFilter,
+                      })
+                    }
+                  >
+                    <option value="Todas">Todas las categorias</option>
+                    {categoryNames.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="taskflow-select-shell">
+                  <i className="bi bi-layers"></i>
+                  <select
+                    className="form-select"
+                    value={statusFilter}
+                    onChange={(event) =>
+                      updateFiltersInUrl({
+                        category: categoryFilter,
+                        status: event.target.value,
+                        priority: priorityFilter,
+                      })
+                    }
+                  >
+                    {statusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status === "Todos" ? "Todos los estados" : status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="taskflow-select-shell">
+                  <i className="bi bi-flag"></i>
+                  <select
+                    className="form-select"
+                    value={priorityFilter}
+                    onChange={(event) =>
+                      updateFiltersInUrl({
+                        category: categoryFilter,
+                        status: statusFilter,
+                        priority: event.target.value,
+                      })
+                    }
+                  >
+                    {priorityOptions.map((priority) => (
+                      <option key={priority} value={priority}>
+                        {priority === "Todas" ? "Todas las prioridades" : priority}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -364,7 +461,10 @@ function Task() {
               </div>
 
               {spotlightTask ? (
-                <div className="task-card">
+                <article
+                  className="task-card task-card--interactive"
+                  onClick={() => navigate(`/task/${spotlightTask.id}`)}
+                >
                   <div className="task-card__row">
                     <div>
                       <h3 className="task-card__title">{spotlightTask.name}</h3>
@@ -387,12 +487,15 @@ function Task() {
                     <button
                       type="button"
                       className="soft-button"
-                      onClick={() => navigate(`/task/${spotlightTask.id}`)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(`/task/${spotlightTask.id}`);
+                      }}
                     >
                       Abrir detalle
                     </button>
                   </div>
-                </div>
+                </article>
               ) : (
                 <div className="empty-state">No hay una tarea destacada por ahora.</div>
               )}
@@ -435,7 +538,8 @@ function Task() {
         onHide={() => setShowAddTaskModal(false)}
         onSubmit={handleCreateTask}
         submitting={savingTask}
-        categories={categories}
+        categories={categoryNames}
+        categoriesMeta={categories}
         workspace={activeWorkspace}
         assignableMembers={(activeGroup?.members || []).filter((member) => member.status === "active" && member.userId)}
       />
@@ -446,7 +550,7 @@ function Task() {
         taskData={taskToEdit}
         onSubmit={handleEditTask}
         submitting={editingTask}
-        categories={categories}
+        categories={categoryNames}
       />
     </div>
   );

@@ -107,4 +107,16 @@ export class AuthService {
       throw error;
     }
   }
+
+  async updatePassword(password) {
+    const { data, error } = await supabase.auth.updateUser({
+      password,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
 }

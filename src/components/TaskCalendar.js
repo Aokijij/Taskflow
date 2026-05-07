@@ -1,9 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import { useTasks } from "../contexts/TaskContext";
+import { supabase } from "../lib/supabaseClient";
+import {
+  buildGoogleCalendarAuthUrl,
+  exchangeGoogleCalendarCode,
+  isGoogleCalendarCallback,
+  syncGoogleCalendar,
+} from "../services/googleCalendarService";
 import { getTaskCategories, getTaskStatus, getTodayString } from "../utils/taskHelpers";
 
 const statusColor = {
@@ -23,13 +31,24 @@ const getStatusChip = (status) => {
 
 const TaskCalendar = () => {
   const navigate = useNavigate();
-  const { tasks, loading, error } = useTasks();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const {
+    tasks,
+    categories,
+    activeWorkspace,
+    loading,
+    error,
+  } = useTasks();
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [categoryFilter, setCategoryFilter] = useState("Todas");
   const [priorityFilter, setPriorityFilter] = useState("Todas");
   const [selectedTaskId, setSelectedTaskId] = useState("");
+  const [googleConnection, setGoogleConnection] = useState(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [syncingCalendar, setSyncingCalendar] = useState(false);
+  const [googleReconnectMode, setGoogleReconnectMode] = useState(false);
 
-  const categories = useMemo(() => getTaskCategories(tasks), [tasks]);
+  const categoryNames = useMemo(() => getTaskCategories(categories), [categories]);
 
   const filteredTasks = useMemo(() => {
     const today = getTodayString();
@@ -88,8 +107,114 @@ const TaskCalendar = () => {
     };
   });
 
+  useEffect(() => {
+    let mounted = true;
+
+    const loadConnection = async () => {
+      const { data, error: connectionError } = await supabase
+        .from("google_calendar_connections")
+        .select("calendar_id, connected_at, updated_at")
+        .maybeSingle();
+
+      if (!mounted) {
+        return;
+      }
+
+      if (connectionError) {
+        setGoogleConnection(null);
+        return;
+      }
+
+      setGoogleConnection(data || null);
+    };
+
+    loadConnection();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isGoogleCalendarCallback(searchParams)) {
+      return;
+    }
+
+    const code = searchParams.get("code");
+
+    if (!code) {
+      return;
+    }
+
+    const connectCalendar = async () => {
+      try {
+        setGoogleLoading(true);
+        await exchangeGoogleCalendarCode(code);
+        const { data } = await supabase
+          .from("google_calendar_connections")
+          .select("calendar_id, connected_at, updated_at")
+          .maybeSingle();
+        setGoogleConnection(data || null);
+        setGoogleReconnectMode(false);
+        toast.success("Google Calendar ya quedo conectado.", {
+          position: "top-right",
+          autoClose: 2400,
+          className: "taskflow-toast",
+        });
+      } catch (exchangeError) {
+        toast.error(exchangeError.message || "No se pudo conectar Google Calendar.", {
+          position: "top-right",
+          autoClose: 3200,
+          className: "taskflow-toast",
+        });
+      } finally {
+        setGoogleLoading(false);
+        setSearchParams({}, { replace: true });
+      }
+    };
+
+    connectCalendar();
+  }, [searchParams, setSearchParams]);
+
+  const handleGoogleConnect = () => {
+    try {
+      window.location.href = buildGoogleCalendarAuthUrl();
+    } catch (connectError) {
+      setGoogleReconnectMode(true);
+      toast.error(connectError.message || "No se pudo abrir Google Calendar.", {
+        position: "top-right",
+        autoClose: 3000,
+        className: "taskflow-toast",
+      });
+    }
+  };
+
+  const handleCalendarSync = async () => {
+    try {
+      setSyncingCalendar(true);
+      const response = await syncGoogleCalendar(activeWorkspace);
+      toast.success(
+        response?.message || "Tus tareas ya quedaron sincronizadas con Google Calendar.",
+        {
+          position: "top-right",
+          autoClose: 2600,
+          className: "taskflow-toast",
+        }
+      );
+    } catch (syncError) {
+      toast.error(syncError.message || "No se pudo sincronizar el calendario.", {
+        position: "top-right",
+        autoClose: 3200,
+        className: "taskflow-toast",
+      });
+    } finally {
+      setSyncingCalendar(false);
+    }
+  };
+
   return (
     <div className="dashboard-page calendar-shell">
+      <ToastContainer />
       <div className="dashboard-topbar">
         <div>
           <h1 className="dashboard-topbar__title">Calendario</h1>
@@ -97,11 +222,45 @@ const TaskCalendar = () => {
             Planifica entregas, revisa prioridades y abre cualquier tarea desde el calendario.
           </p>
         </div>
+        <div className="dashboard-topbar__actions">
+          <button
+            type="button"
+            className={`calendar-connection-pill ${
+              googleConnection ? "calendar-connection-pill--active" : "calendar-connection-pill--inactive"
+            }`}
+            onClick={!googleConnection || googleReconnectMode ? handleGoogleConnect : undefined}
+            disabled={googleLoading || (googleConnection && !googleReconnectMode)}
+          >
+            <i className="bi bi-google me-2"></i>
+            <span>{googleReconnectMode ? "Reconectar Google" : "Google Calendar"}</span>
+            <b></b>
+          </button>
+          <button
+            type="button"
+            className="dashboard-action"
+            onClick={handleCalendarSync}
+            disabled={syncingCalendar || googleLoading}
+          >
+            <i className="bi bi-arrow-repeat me-2"></i>
+            {syncingCalendar ? "Sincronizando..." : "Sincronizar calendario"}
+          </button>
+        </div>
       </div>
 
       <div className="calendar-layout">
         <div className="surface-card calendar-workspace">
           <div className="surface-card__body">
+            <div className="calendar-sync-banner">
+              <div>
+                <strong>
+                  {googleConnection ? "Google Calendar conectado" : "Conecta Google Calendar"}
+                </strong>
+                <span>
+                  Sincroniza el espacio actual para ver tareas en tu agenda y usar recordatorios de Google.
+                </span>
+              </div>
+            </div>
+
             <div className="calendar-filter-bar">
               <div className="pill-filter-group" aria-label="Filtro por estado">
                 {statusOptions.map((status) => (
@@ -119,30 +278,36 @@ const TaskCalendar = () => {
               </div>
 
               <div className="calendar-selectors">
-                <select
-                  className="form-select"
-                  value={categoryFilter}
-                  onChange={(event) => setCategoryFilter(event.target.value)}
-                >
-                  <option value="Todas">Todas las categorias</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
+                <div className="taskflow-select-shell">
+                  <i className="bi bi-tags"></i>
+                  <select
+                    className="form-select form-select--calendar"
+                    value={categoryFilter}
+                    onChange={(event) => setCategoryFilter(event.target.value)}
+                  >
+                    <option value="Todas">Todas las categorias</option>
+                    {categoryNames.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                <select
-                  className="form-select"
-                  value={priorityFilter}
-                  onChange={(event) => setPriorityFilter(event.target.value)}
-                >
-                  {priorityOptions.map((priority) => (
-                    <option key={priority} value={priority}>
-                      {priority === "Todas" ? "Todas las prioridades" : priority}
-                    </option>
-                  ))}
-                </select>
+                <div className="taskflow-select-shell">
+                  <i className="bi bi-flag"></i>
+                  <select
+                    className="form-select form-select--calendar"
+                    value={priorityFilter}
+                    onChange={(event) => setPriorityFilter(event.target.value)}
+                  >
+                    {priorityOptions.map((priority) => (
+                      <option key={priority} value={priority}>
+                        {priority === "Todas" ? "Todas las prioridades" : priority}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 

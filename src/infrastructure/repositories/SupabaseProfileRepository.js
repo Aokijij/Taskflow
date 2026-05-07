@@ -11,6 +11,7 @@ const mapProfileRecord = (record) => {
     lastName: record.last_name,
     phone: record.phone,
     avatarUrl: record.avatar_url,
+    browserNotificationsEnabled: Boolean(record.browser_notifications_enabled),
     createdAt: record.created_at,
     updatedAt: record.updated_at,
   };
@@ -38,6 +39,7 @@ export class SupabaseProfileRepository {
       last_name: profile.lastName,
       phone: profile.phone,
       avatar_url: profile.avatarUrl || null,
+      browser_notifications_enabled: Boolean(profile.browserNotificationsEnabled),
     };
 
     const { data, error } = await supabase
@@ -59,6 +61,10 @@ export class SupabaseProfileRepository {
       last_name: updates.lastName,
       phone: updates.phone,
     };
+
+    if (updates.browserNotificationsEnabled !== undefined) {
+      payload.browser_notifications_enabled = Boolean(updates.browserNotificationsEnabled);
+    }
 
     const { data, error } = await supabase
       .from("profiles")

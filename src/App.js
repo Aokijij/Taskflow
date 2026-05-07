@@ -10,8 +10,10 @@ import Groups from "./pages/Groups";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
+import Categories from "./pages/Categories";
 import Task from "./pages/Task";
 import TaskDetails from "./pages/TaskDetails";
+import Welcome from "./pages/Welcome";
 
 function RouteLoading() {
   return <div className="text-center mt-5">Cargando sesi&oacute;n...</div>;
@@ -61,7 +63,7 @@ function App() {
           path="/"
           element={
             <PublicRoute>
-              <Login />
+              <Welcome />
             </PublicRoute>
           }
         />
@@ -97,6 +99,15 @@ function App() {
             <PrivateRoute>
               <Navbar />
               <TaskStatistics />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/categories"
+          element={
+            <PrivateRoute>
+              <Navbar />
+              <Categories />
             </PrivateRoute>
           }
         />

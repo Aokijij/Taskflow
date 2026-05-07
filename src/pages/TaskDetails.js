@@ -47,7 +47,7 @@ const formatActivityAction = (action) => {
 const TaskDetails = () => {
   const navigate = useNavigate();
   const { taskId } = useParams();
-  const { tasks, groups, getTaskById, updateTask, completeTask, removeTask, getTaskActivity } =
+  const { tasks, categories, groups, getTaskById, updateTask, completeTask, removeTask, getTaskActivity } =
     useTasks();
   const [task, setTask] = useState(null);
   const [activity, setActivity] = useState([]);
@@ -56,7 +56,7 @@ const TaskDetails = () => {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const categories = useMemo(() => getTaskCategories(tasks), [tasks]);
+  const categoryNames = useMemo(() => getTaskCategories(categories), [categories]);
 
   const relatedTasks = useMemo(
     () =>
@@ -330,7 +330,7 @@ const TaskDetails = () => {
         taskData={task}
         onSubmit={handleTaskEdited}
         submitting={saving}
-        categories={categories}
+        categories={categoryNames}
       />
     </div>
   );

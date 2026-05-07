@@ -7,7 +7,7 @@ import App from "./App";
 import { AuthProvider } from "./contexts/AuthContext";
 import { TaskProvider } from "./contexts/TaskContext";
 
-test("renders login screen", async () => {
+test("renders public welcome screen", async () => {
   render(
     <AuthProvider>
       <TaskProvider>
@@ -16,5 +16,5 @@ test("renders login screen", async () => {
     </AuthProvider>
   );
 
-  expect(await screen.findByText(/bienvenido/i)).toBeInTheDocument();
+  expect(await screen.findByText(/planifica, colabora y avanza/i)).toBeInTheDocument();
 });

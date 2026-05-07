@@ -49,12 +49,20 @@ export class TaskService {
     return this.taskRepository.getGroups();
   }
 
-  async createGroup(userId, userEmail, name) {
-    return this.taskRepository.createGroup(userId, userEmail, name);
+  async getCategories() {
+    return this.taskRepository.getCategories();
   }
 
-  async updateGroup(groupId, name) {
-    return this.taskRepository.updateGroup(groupId, name);
+  async deleteCategory(categoryId) {
+    return this.taskRepository.deleteCategory(categoryId);
+  }
+
+  async createGroup(userId, userEmail, name, color) {
+    return this.taskRepository.createGroup(userId, userEmail, name, color);
+  }
+
+  async updateGroup(groupId, name, color) {
+    return this.taskRepository.updateGroup(groupId, name, color);
   }
 
   async deleteGroup(groupId) {

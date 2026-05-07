@@ -10,6 +10,7 @@ const navItems = [
   { path: "/calendar", label: "Calendario", icon: "bi-calendar3" },
   { path: "/task-status", label: "Workflow", icon: "bi-kanban" },
   { path: "/statistics", label: "Estadisticas", icon: "bi-graph-up" },
+  { path: "/categories", label: "Categorias", icon: "bi-tags" },
   { path: "/groups", label: "Grupos", icon: "bi-people" },
 ];
 
@@ -85,7 +86,7 @@ const Navbar = () => {
     try {
       await logout();
     } finally {
-      navigate("/login");
+      navigate("/");
     }
   };
 
@@ -154,7 +155,6 @@ const Navbar = () => {
 
       <section className="sidebar-workspaces">
         <div className="sidebar-workspaces__title">
-          <span>Espacios</span>
           <strong>{activeWorkspace.type === "group" ? activeWorkspace.name : "Personal"}</strong>
         </div>
         <button
@@ -177,6 +177,9 @@ const Navbar = () => {
             className={`sidebar-workspace ${
               activeWorkspace.id === group.id ? "sidebar-workspace--active" : ""
             }`}
+            style={{
+              "--workspace-accent": group.color || "#2563eb",
+            }}
             onClick={() => {
               setActiveWorkspace(group);
               setIsMenuOpen(false);
@@ -190,14 +193,26 @@ const Navbar = () => {
       </section>
 
       <div className="sidebar-overview">
-        <div>
+        <button
+          type="button"
+          onClick={() => {
+            setIsMenuOpen(false);
+            navigate("/task-status?status=Pendientes");
+          }}
+        >
           <span>Pendientes</span>
           <strong>{summary.pending}</strong>
-        </div>
-        <div>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setIsMenuOpen(false);
+            navigate("/task-status?status=Atrasadas");
+          }}
+        >
           <span>Vencidas</span>
           <strong>{summary.overdue}</strong>
-        </div>
+        </button>
       </div>
 
       <section className="sidebar-inbox">

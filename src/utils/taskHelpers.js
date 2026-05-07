@@ -28,6 +28,7 @@ export const formatGroupRecord = (record) => ({
   ownerId: record.owner_id,
   name: record.name,
   code: record.code,
+  color: record.color || "#2563eb",
   createdAt: record.created_at,
   updatedAt: record.updated_at,
   members: (record.group_members || []).map((member) => ({
@@ -56,6 +57,7 @@ export const formatInvitationRecord = (record) => ({
         ownerId: record.task_groups.owner_id,
         name: record.task_groups.name,
         code: record.task_groups.code,
+        color: record.task_groups.color || "#2563eb",
       }
     : null,
 });
@@ -69,6 +71,17 @@ export const formatActivityRecord = (record) => ({
   action: record.action,
   details: record.details,
   createdAt: record.created_at,
+});
+
+export const formatCategoryRecord = (record) => ({
+  id: record.id,
+  userId: record.user_id,
+  scope: record.scope || "personal",
+  groupId: record.group_id,
+  name: record.name,
+  active: Boolean(record.active),
+  createdAt: record.created_at,
+  updatedAt: record.updated_at,
 });
 
 export const sortTasksByPriority = (tasks) =>
@@ -99,10 +112,11 @@ export const isRecentlyCompleted = (task, visibleDays = 7) => {
   return daysBetween(task.updatedAt || task.createdAt || task.date) <= visibleDays;
 };
 
-export const getTaskCategories = (tasks) =>
-  [...new Set(tasks.map((task) => task.category).filter(Boolean))].sort((a, b) =>
-    a.localeCompare(b)
-  );
+export const getTaskCategories = (categories = []) =>
+  [...categories]
+    .map((category) => (typeof category === "string" ? category : category.name))
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
 
 export const getTaskStatus = (task) => {
   if (task.completed) {
@@ -114,6 +128,35 @@ export const getTaskStatus = (task) => {
   }
 
   return "Pendiente";
+};
+
+export const getTaskStatusFilterLabel = (task) => {
+  const status = getTaskStatus(task);
+
+  if (status === "Completada") {
+    return "Completadas";
+  }
+
+  if (status === "Atrasada") {
+    return "Atrasadas";
+  }
+
+  return "Pendientes";
+};
+
+export const getCategorySummary = (categories = [], tasks = []) =>
+  [...categories].map((category) => ({
+    id: category.id,
+    name: category.name,
+    active: Boolean(category.active),
+    total: tasks.filter((task) => task.category === category.name).length,
+    completed: tasks.filter((task) => task.category === category.name && task.completed).length,
+  }));
+
+export const getTomorrowString = () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toISOString().split("T")[0];
 };
 
 export const getTaskCode = (taskId = "") =>

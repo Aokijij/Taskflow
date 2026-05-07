@@ -120,6 +120,8 @@ export function AuthProvider({ children }) {
     setProfile(null);
   }, []);
 
+  const updatePassword = useCallback(async (password) => authService.updatePassword(password), []);
+
   const value = useMemo(
     () => ({
       session,
@@ -131,10 +133,22 @@ export function AuthProvider({ children }) {
       loginWithGoogle,
       register,
       logout,
+      updatePassword,
       refreshProfile,
       setProfile,
     }),
-    [session, user, profile, loading, login, loginWithGoogle, logout, refreshProfile, register]
+    [
+      session,
+      user,
+      profile,
+      loading,
+      login,
+      loginWithGoogle,
+      logout,
+      updatePassword,
+      refreshProfile,
+      register,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

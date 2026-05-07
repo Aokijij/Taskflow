@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useTasks } from "../contexts/TaskContext";
@@ -42,8 +42,19 @@ const getWorkflowLabel = (task) => {
 
 const TaskStatusView = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { tasks, completeTask, loading, error } = useTasks();
   const [statusFilter, setStatusFilter] = useState("Pendientes");
+
+  useEffect(() => {
+    const incomingStatus = searchParams.get("status");
+    if (incomingStatus && ["Pendientes", "Completadas", "Atrasadas"].includes(incomingStatus)) {
+      setStatusFilter(incomingStatus);
+      return;
+    }
+
+    setStatusFilter("Pendientes");
+  }, [searchParams]);
 
   const filteredTasks = useMemo(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -109,7 +120,7 @@ const TaskStatusView = () => {
                   className={`pill-filter pill-filter--${status.toLowerCase()} ${
                     statusFilter === status ? "pill-filter--active" : ""
                   }`}
-                  onClick={() => setStatusFilter(status)}
+                  onClick={() => setSearchParams({ status })}
                 >
                   {status}
                 </button>
@@ -126,7 +137,19 @@ const TaskStatusView = () => {
           ) : (
             <div className="task-board task-board--workflow">
               {filteredTasks.map((task) => (
-                <div key={task.id} className={`task-card ${getWorkflowClass(task)}`}>
+                <article
+                  key={task.id}
+                  className={`task-card ${getWorkflowClass(task)} workflow-card--clickable`}
+                  onClick={() => navigate(`/task/${task.id}`)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      navigate(`/task/${task.id}`);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
                   <div className="workflow-card__status">{getWorkflowLabel(task)}</div>
                   <div className="task-card__row">
                     <div>
@@ -161,7 +184,10 @@ const TaskStatusView = () => {
                     <button
                       type="button"
                       className="ghost-button"
-                      onClick={() => navigate(`/task/${task.id}`)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(`/task/${task.id}`);
+                      }}
                     >
                       Ver detalle
                     </button>
@@ -173,13 +199,16 @@ const TaskStatusView = () => {
                             ? "soft-button--danger"
                             : "soft-button--success"
                         }`}
-                        onClick={() => handleCompleteTask(task.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleCompleteTask(task.id);
+                        }}
                       >
                         Completar
                       </button>
                     )}
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           )}
