@@ -36,7 +36,7 @@ function Register() {
         {
           position: "top-right",
           autoClose: 2500,
-          theme: "colored",
+          className: "taskflow-toast",
         }
       );
 
@@ -45,7 +45,7 @@ function Register() {
       toast.error(error.message || "No se pudo registrar la cuenta.", {
         position: "top-right",
         autoClose: 3000,
-        theme: "colored",
+        className: "taskflow-toast",
       });
     } finally {
       setSubmitting(false);

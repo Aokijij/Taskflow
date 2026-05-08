@@ -18,6 +18,18 @@
   --shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
 }
 
+body[data-theme="dark"] {
+  --bg: #081120;
+  --surface: rgba(11, 18, 32, 0.86);
+  --surface-strong: #0f172a;
+  --surface-dark: #020617;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --line: rgba(148, 163, 184, 0.14);
+  --primary-soft: rgba(37, 99, 235, 0.18);
+  --shadow: 0 24px 60px rgba(2, 6, 23, 0.38);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -31,6 +43,92 @@ body {
     linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
   color: var(--text);
   overflow-x: hidden;
+}
+
+body[data-theme="light"] .dashboard-sidebar {
+  background:
+    linear-gradient(180deg, rgba(248, 251, 255, 0.96) 0%, rgba(236, 244, 253, 0.94) 100%);
+  color: var(--text);
+  box-shadow: 18px 0 40px rgba(148, 163, 184, 0.16);
+  border-right: 1px solid rgba(37, 99, 235, 0.08);
+}
+
+body[data-theme="light"] .sidebar-brand,
+body[data-theme="light"] .sidebar-workspaces,
+body[data-theme="light"] .sidebar-overview button,
+body[data-theme="light"] .sidebar-inbox,
+body[data-theme="light"] .sidebar-user {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 250, 255, 0.9));
+  border-color: rgba(37, 99, 235, 0.1);
+}
+
+body[data-theme="light"] .sidebar-brand span,
+body[data-theme="light"] .sidebar-workspaces__title strong,
+body[data-theme="light"] .sidebar-overview span,
+body[data-theme="light"] .inbox-header p,
+body[data-theme="light"] .sidebar-user__profile em,
+body[data-theme="light"] .sidebar-workspace small {
+  color: #6b7a90;
+}
+
+body[data-theme="light"] .sidebar-nav__item,
+body[data-theme="light"] .sidebar-workspace,
+body[data-theme="light"] .sidebar-user__profile,
+body[data-theme="light"] .sidebar-brand strong,
+body[data-theme="light"] .sidebar-overview button,
+body[data-theme="light"] .inbox-header h3 {
+  color: #14213d;
+}
+
+body[data-theme="light"] .sidebar-nav__item:hover,
+body[data-theme="light"] .sidebar-nav__item--active {
+  background: rgba(37, 99, 235, 0.08);
+  color: #14213d;
+  border-color: rgba(37, 99, 235, 0.08);
+}
+
+body[data-theme="light"] .inbox-alert {
+  color: #14213d;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 255, 0.92));
+  border-color: rgba(37, 99, 235, 0.08);
+}
+
+body[data-theme="light"] .inbox-alert small,
+body[data-theme="light"] .inbox-alert em {
+  color: #6b7a90;
+}
+
+body[data-theme="light"] .inbox-alert strong {
+  color: #14213d;
+}
+
+body[data-theme="light"] .inbox-empty {
+  color: #0f766e;
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.14), rgba(45, 212, 191, 0.1));
+}
+
+body[data-theme="light"] .sidebar-user__logout {
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.16), rgba(248, 113, 113, 0.12));
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.16);
+}
+
+body[data-theme="light"] .sidebar-workspace:hover,
+body[data-theme="light"] .sidebar-workspace--active {
+  color: #ffffff;
+}
+
+body[data-theme="light"] .theme-toggle,
+body[data-theme="light"] .sidebar-toggle {
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+}
+
+body[data-theme="dark"] {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 26%),
+    radial-gradient(circle at 85% 20%, rgba(20, 184, 166, 0.12), transparent 24%),
+    linear-gradient(180deg, #07101d 0%, #0b1424 100%);
 }
 
 a {
@@ -74,6 +172,15 @@ a {
   width: 42px;
   height: 42px;
   margin-left: auto;
+  border: 0;
+  border-radius: 14px;
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.theme-toggle {
+  width: 42px;
+  height: 42px;
   border: 0;
   border-radius: 14px;
   color: #f8fafc;
@@ -504,7 +611,20 @@ a {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
+  align-items: center;
   gap: 10px;
+}
+
+.page-help-trigger {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.98rem;
+  border-radius: 14px;
+  align-self: center;
 }
 
 .dashboard-action {
@@ -560,6 +680,7 @@ a {
 
 .taskflow-select-shell .form-select {
   padding-left: 48px;
+  min-width: 0;
 }
 
 .form-control {
@@ -678,6 +799,7 @@ a {
   color: var(--text);
   background: rgba(248, 250, 252, 0.86);
   font-weight: 900;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
 .workspace-tab small {
@@ -687,8 +809,12 @@ a {
 .workspace-tab--active {
   color: #ffffff;
   border-color: transparent;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--workspace-accent, #f59e0b) 70%, white 4%), #2563eb);
-  box-shadow: 0 14px 28px color-mix(in srgb, var(--workspace-accent, #f59e0b) 28%, rgba(37, 99, 235, 0.18));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--workspace-accent, #f59e0b) 74%, white 8%),
+    color-mix(in srgb, var(--workspace-accent, #f59e0b) 44%, #2563eb 56%)
+  );
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--workspace-accent, #f59e0b) 24%, rgba(37, 99, 235, 0.16));
 }
 
 .workspace-tab--active small {
@@ -805,7 +931,8 @@ a {
   padding: 18px;
   border-radius: 22px;
   background:
-    radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 34%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--group-accent, #f59e0b) 26%, white 74%), transparent 36%),
+    linear-gradient(180deg, color-mix(in srgb, var(--group-accent, #f59e0b) 12%, white 88%), rgba(248, 250, 252, 0.96)),
     rgba(248, 250, 252, 0.92);
   border: 1px solid rgba(20, 33, 61, 0.07);
 }
@@ -825,11 +952,20 @@ a {
   justify-content: flex-end;
 }
 
+.group-card__actions .soft-button {
+  background: color-mix(in srgb, var(--group-accent, #2563eb) 16%, white 84%);
+  color: color-mix(in srgb, var(--group-accent, #2563eb) 80%, #0f172a 20%);
+}
+
 .group-card h3,
 .group-card p,
 .invitation-card strong,
 .invitation-card span {
   margin: 0;
+}
+
+.group-card .workspace-eyebrow {
+  color: color-mix(in srgb, var(--group-accent, #f59e0b) 78%, #7c2d12 22%);
 }
 
 .group-card h3 {
@@ -1652,7 +1788,7 @@ a {
 }
 
 .calendar-connection-pill {
-  min-width: 220px;
+  min-width: 240px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1663,6 +1799,10 @@ a {
   font-weight: 900;
   background: rgba(15, 23, 42, 0.06);
   color: var(--text);
+}
+
+.calendar-connection-pill span {
+  white-space: nowrap;
 }
 
 .calendar-connection-pill b {
@@ -1695,12 +1835,15 @@ a {
 
 .form-select--calendar {
   min-width: 0;
-  padding-right: 42px;
+  width: 100%;
+  font-size: 0.94rem;
+  text-overflow: ellipsis;
+  padding-right: 52px;
 }
 
 .calendar-filter-bar {
   display: grid;
-  grid-template-columns: 1fr minmax(280px, 420px);
+  grid-template-columns: 1fr minmax(360px, 520px);
   gap: 16px;
   align-items: center;
   margin-bottom: 22px;
@@ -1710,6 +1853,7 @@ a {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  min-width: 0;
 }
 
 .calendar-side-panel {
@@ -1848,13 +1992,21 @@ a {
 }
 
 .taskflow-modal {
-  max-width: min(560px, calc(100vw - 24px));
+  max-width: min(680px, calc(100vw - 24px));
   margin-left: auto;
   margin-right: auto;
 }
 
+.taskflow-modal.modal-dialog {
+  max-width: min(680px, calc(100vw - 24px));
+}
+
 .taskflow-modal--wide {
-  max-width: min(760px, calc(100vw - 24px));
+  max-width: min(1520px, calc(100vw - 32px));
+}
+
+.taskflow-modal--wide.modal-dialog {
+  max-width: min(1520px, calc(100vw - 32px));
 }
 
 .form-control-color {
@@ -1871,6 +2023,221 @@ a {
 
 .taskflow-modal .modal-body {
   padding: 18px 24px 24px;
+}
+
+.page-help {
+  display: grid;
+  gap: 18px;
+}
+
+.page-help__intro {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.page-help__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+.page-help-card {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(20, 33, 61, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 28%),
+    rgba(248, 250, 252, 0.9);
+  min-height: 300px;
+}
+
+.page-help-card__icon,
+.onboarding__icon {
+  width: 52px;
+  height: 52px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 18px;
+  color: #ffffff;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.2);
+}
+
+.page-help-card h3,
+.page-help-card p {
+  margin: 0;
+}
+
+.page-help-card h3 {
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.page-help-card p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.onboarding {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  align-items: stretch;
+}
+
+.onboarding__hero {
+  display: grid;
+  gap: 16px;
+  padding: 28px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top right, rgba(20, 184, 166, 0.12), transparent 28%),
+    rgba(248, 250, 252, 0.92);
+  min-height: 100%;
+}
+
+.onboarding__badge {
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.1);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.onboarding__hero h2,
+.onboarding__hero p {
+  margin: 0;
+}
+
+.onboarding__hero h2 {
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.onboarding__hero p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.onboarding__timeline {
+  display: grid;
+  gap: 12px;
+}
+
+.onboarding__progress {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.onboarding__progress-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb, #14b8a6);
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.2);
+}
+
+.onboarding__mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.onboarding__mini-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(20, 33, 61, 0.07);
+}
+
+.onboarding__mini-card strong,
+.onboarding__mini-card span {
+  display: block;
+}
+
+.onboarding__mini-card strong {
+  font-weight: 900;
+}
+
+.onboarding__mini-card span {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.onboarding__pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.onboarding__feature-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(20, 33, 61, 0.08);
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.onboarding-step {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid rgba(20, 33, 61, 0.08);
+  border-radius: 20px;
+  color: var(--text);
+  text-align: left;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.onboarding-step strong,
+.onboarding-step span {
+  display: block;
+}
+
+.onboarding-step strong {
+  font-weight: 900;
+}
+
+.onboarding-step span {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.onboarding-step b {
+  margin-top: 4px;
+  color: #1d4ed8;
+  font-size: 0.78rem;
+}
+
+.onboarding-step--active {
+  border-color: rgba(37, 99, 235, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 28%),
+    rgba(241, 245, 255, 0.94);
+  box-shadow: 0 16px 30px rgba(37, 99, 235, 0.08);
+}
+
+.onboarding__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .taskflow-modal .form-label {
@@ -1951,6 +2318,359 @@ a {
     radial-gradient(circle at top right, rgba(20, 184, 166, 0.18), transparent 32%),
     rgba(255, 255, 255, 0.82);
   box-shadow: var(--shadow);
+}
+
+.task-detail-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+body[data-theme="dark"] .surface-card,
+body[data-theme="dark"] .task-card,
+body[data-theme="dark"] .category-task-card,
+body[data-theme="dark"] .category-dashboard-card,
+body[data-theme="dark"] .group-card,
+body[data-theme="dark"] .invitation-card,
+body[data-theme="dark"] .metric-card,
+body[data-theme="dark"] .profile-setting-card,
+body[data-theme="dark"] .profile-hero-card,
+body[data-theme="dark"] .profile-status-pill,
+body[data-theme="dark"] .workspace-tab:not(.workspace-tab--active) {
+  background: rgba(11, 18, 32, 0.9);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .dashboard-page,
+body[data-theme="dark"] .dashboard-topbar__title,
+body[data-theme="dark"] .section-title h2,
+body[data-theme="dark"] .section-title h3,
+body[data-theme="dark"] .group-section-list h4,
+body[data-theme="dark"] .page-help-card h3,
+body[data-theme="dark"] .onboarding__hero h2,
+body[data-theme="dark"] .onboarding__mini-card strong,
+body[data-theme="dark"] .workspace-form label,
+body[data-theme="dark"] .metric-card__value,
+body[data-theme="dark"] .info-list__value,
+body[data-theme="dark"] .task-card__title,
+body[data-theme="dark"] .task-table__title,
+body[data-theme="dark"] .group-card h3,
+body[data-theme="dark"] .group-person-row span,
+body[data-theme="dark"] .member-pill,
+body[data-theme="dark"] .calendar-task-preview h2,
+body[data-theme="dark"] .calendar-mini-item strong,
+body[data-theme="dark"] .category-dashboard-card strong,
+body[data-theme="dark"] .category-dashboard-card b,
+body[data-theme="dark"] .category-task-card__header h3,
+body[data-theme="dark"] .task-detail-hero h1,
+body[data-theme="dark"] .task-detail-meta-grid strong,
+body[data-theme="dark"] .activity-item strong,
+body[data-theme="dark"] .related-task-item strong,
+body[data-theme="dark"] .profile-identity h2,
+body[data-theme="dark"] .workspace-code,
+body[data-theme="dark"] .modal-title,
+body[data-theme="dark"] .taskflow-modal .form-label,
+body[data-theme="dark"] .taskflow-modal .btn,
+body[data-theme="dark"] .calendar-sync-banner strong,
+body[data-theme="dark"] .insight-meter__top strong,
+body[data-theme="dark"] .status-legend span,
+body[data-theme="dark"] .category-bar strong {
+  color: #e2e8f0;
+}
+
+body[data-theme="dark"] .dashboard-topbar__subtitle,
+body[data-theme="dark"] .section-title p,
+body[data-theme="dark"] .metric-card__label,
+body[data-theme="dark"] .metric-card__note,
+body[data-theme="dark"] .task-card__description,
+body[data-theme="dark"] .task-table__subtle,
+body[data-theme="dark"] .group-card p,
+body[data-theme="dark"] .group-person-row small,
+body[data-theme="dark"] .member-pill small,
+body[data-theme="dark"] .calendar-task-preview p,
+body[data-theme="dark"] .calendar-sync-banner span,
+body[data-theme="dark"] .calendar-mini-item span,
+body[data-theme="dark"] .empty-state,
+body[data-theme="dark"] .profile-identity p,
+body[data-theme="dark"] .info-list__label,
+body[data-theme="dark"] .category-dashboard-card small,
+body[data-theme="dark"] .category-task-card__header p,
+body[data-theme="dark"] .task-detail-hero p,
+body[data-theme="dark"] .activity-item p,
+body[data-theme="dark"] .activity-item small,
+body[data-theme="dark"] .related-task-item span,
+body[data-theme="dark"] .workspace-eyebrow,
+body[data-theme="dark"] .modal-helper,
+body[data-theme="dark"] .onboarding__hero p,
+body[data-theme="dark"] .page-help__intro,
+body[data-theme="dark"] .page-help-card p,
+body[data-theme="dark"] .profile-toggle-row span,
+body[data-theme="dark"] .category-bar span,
+body[data-theme="dark"] .insight-meter__top span,
+body[data-theme="dark"] .insight-meter p {
+  color: #94a3b8;
+}
+
+body[data-theme="dark"] .form-control,
+body[data-theme="dark"] .form-select,
+body[data-theme="dark"] .taskflow-modal .form-control,
+body[data-theme="dark"] .taskflow-modal .form-select {
+  color: var(--text);
+  background: rgba(15, 23, 42, 0.88);
+}
+
+body[data-theme="dark"] .form-control::placeholder,
+body[data-theme="dark"] .taskflow-modal .form-control::placeholder {
+  color: rgba(148, 163, 184, 0.62);
+}
+
+body[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.9);
+}
+
+body[data-theme="dark"] .ghost-button {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body[data-theme="dark"] .soft-button {
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.14);
+}
+
+body[data-theme="dark"] .soft-button--success {
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.16);
+}
+
+body[data-theme="dark"] .soft-button--warning {
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.18);
+}
+
+body[data-theme="dark"] .soft-button--danger {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.18);
+}
+
+body[data-theme="dark"] .calendar-sync-banner,
+body[data-theme="dark"] .calendar-mini-item,
+body[data-theme="dark"] .task-detail-description,
+body[data-theme="dark"] .task-detail-meta-grid div,
+body[data-theme="dark"] .activity-item,
+body[data-theme="dark"] .related-task-item,
+body[data-theme="dark"] .workspace-form,
+body[data-theme="dark"] .group-section-list,
+body[data-theme="dark"] .group-person-row,
+body[data-theme="dark"] .onboarding__feature-pill,
+body[data-theme="dark"] .page-help-card {
+  background: rgba(15, 23, 42, 0.76);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .taskflow-modal .modal-content {
+  background: rgba(8, 17, 32, 0.96);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .taskflow-modal .modal-header .btn-close {
+  filter: invert(0.9);
+  opacity: 0.8;
+}
+
+body[data-theme="dark"] .taskflow-alert,
+body[data-theme="dark"] .taskflow-alert .swal2-title,
+body[data-theme="dark"] .taskflow-alert .swal2-html-container,
+body[data-theme="dark"] .Toastify__toast.taskflow-toast,
+body[data-theme="dark"] .Toastify__toast.taskflow-toast .Toastify__toast-body,
+body[data-theme="dark"] .Toastify__toast.taskflow-toast .Toastify__close-button {
+  color: #e2e8f0 !important;
+}
+
+body[data-theme="dark"] .Toastify__toast.taskflow-toast.Toastify__toast--success,
+body[data-theme="dark"] .Toastify__toast.taskflow-toast.Toastify__toast--error,
+body[data-theme="dark"] .Toastify__toast.taskflow-toast.Toastify__toast--info {
+  background: rgba(8, 17, 32, 0.98);
+}
+
+body[data-theme="light"] .taskflow-alert,
+body[data-theme="light"] .taskflow-alert .swal2-title,
+body[data-theme="light"] .taskflow-alert .swal2-html-container,
+body[data-theme="light"] .Toastify__toast.taskflow-toast,
+body[data-theme="light"] .Toastify__toast.taskflow-toast .Toastify__toast-body,
+body[data-theme="light"] .Toastify__toast.taskflow-toast .Toastify__close-button {
+  color: #14213d !important;
+}
+
+body[data-theme="dark"] .modal-workspace-note {
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.14);
+}
+
+body[data-theme="dark"] .calendar-connection-pill--inactive {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body[data-theme="dark"] .calendar-shell .fc-col-header-cell,
+body[data-theme="dark"] .calendar-shell .fc-daygrid-day,
+body[data-theme="dark"] .calendar-shell .fc-scrollgrid {
+  background: rgba(15, 23, 42, 0.78);
+}
+
+body[data-theme="dark"] .calendar-shell .fc-theme-standard td,
+body[data-theme="dark"] .calendar-shell .fc-theme-standard th {
+  border-color: rgba(148, 163, 184, 0.12);
+}
+
+body[data-theme="dark"] .calendar-shell .fc-toolbar-title,
+body[data-theme="dark"] .calendar-shell .fc-col-header-cell-cushion,
+body[data-theme="dark"] .calendar-shell .fc-daygrid-day-number {
+  color: var(--text);
+}
+
+body[data-theme="dark"] .calendar-shell .fc-button {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+}
+
+body[data-theme="dark"] .calendar-shell .fc-button-active {
+  color: #ffffff !important;
+}
+
+body[data-theme="dark"] .info-list__item,
+body[data-theme="dark"] .page-help-card,
+body[data-theme="dark"] .onboarding__hero,
+body[data-theme="dark"] .onboarding-step,
+body[data-theme="dark"] .onboarding__mini-card {
+  background: rgba(15, 23, 42, 0.76);
+}
+
+body[data-theme="dark"] .task-chip--neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #e2e8f0;
+}
+
+body[data-theme="dark"] .task-chip--primary {
+  background: rgba(37, 99, 235, 0.16);
+  color: #93c5fd;
+}
+
+body[data-theme="dark"] .task-chip--success {
+  background: rgba(16, 185, 129, 0.16);
+  color: #6ee7b7;
+}
+
+body[data-theme="dark"] .task-chip--warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fcd34d;
+}
+
+body[data-theme="dark"] .task-chip--danger {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+}
+
+body[data-theme="dark"] .task-detail-hero {
+  border-color: rgba(148, 163, 184, 0.14);
+  background:
+    radial-gradient(circle at top right, rgba(20, 184, 166, 0.14), transparent 32%),
+    rgba(11, 18, 32, 0.96);
+}
+
+body[data-theme="dark"] .task-detail-hero--status-warning {
+  background:
+    linear-gradient(90deg, rgba(245, 158, 11, 0.12), transparent 42%),
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.14), transparent 34%),
+    rgba(11, 18, 32, 0.96);
+}
+
+body[data-theme="dark"] .task-detail-hero--status-success {
+  background:
+    linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent 42%),
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 34%),
+    rgba(11, 18, 32, 0.96);
+}
+
+body[data-theme="dark"] .task-detail-hero--status-danger {
+  background:
+    linear-gradient(90deg, rgba(239, 68, 68, 0.12), transparent 42%),
+    radial-gradient(circle at top right, rgba(239, 68, 68, 0.14), transparent 34%),
+    rgba(11, 18, 32, 0.96);
+}
+
+body[data-theme="dark"] .insight-meter__ring {
+  color: #e2e8f0;
+  background:
+    radial-gradient(circle, rgba(15, 23, 42, 0.96) 58%, transparent 60%),
+    conic-gradient(var(--meter-color) var(--meter), rgba(148, 163, 184, 0.18) 0);
+}
+
+body[data-theme="dark"] .insight-meter__bar {
+  background: rgba(148, 163, 184, 0.16);
+}
+
+body[data-theme="dark"] .category-bar__track {
+  background: rgba(148, 163, 184, 0.12);
+}
+
+body[data-theme="dark"] .profile-status-pill--inactive {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body[data-theme="dark"] .profile-settings-toggle--active,
+body[data-theme="dark"] .category-dashboard-card__trash,
+body[data-theme="dark"] .group-person-row button {
+  color: #93c5fd;
+}
+
+body[data-theme="dark"] .group-card {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--group-accent, #2563eb) 34%, transparent), transparent 36%),
+    linear-gradient(180deg, color-mix(in srgb, var(--group-accent, #2563eb) 16%, #0b1220 84%), rgba(11, 18, 32, 0.98));
+}
+
+body[data-theme="dark"] .member-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .group-card__actions .soft-button {
+  background: color-mix(in srgb, var(--group-accent, #2563eb) 18%, rgba(15, 23, 42, 0.82));
+  color: #e2e8f0;
+}
+
+body[data-theme="dark"] .group-person-row button {
+  background: rgba(37, 99, 235, 0.18);
+  color: #bfdbfe;
+}
+
+body[data-theme="dark"] .workspace-tab {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .workflow-card {
+  background: rgba(11, 18, 32, 0.92);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .workflow-card--pending,
+body[data-theme="dark"] .workflow-card--urgent {
+  background:
+    linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(11, 18, 32, 0.96) 26%),
+    rgba(11, 18, 32, 0.96);
+}
+
+body[data-theme="dark"] .workflow-card--overdue {
+  background:
+    linear-gradient(180deg, rgba(239, 68, 68, 0.12), rgba(11, 18, 32, 0.96) 26%),
+    rgba(11, 18, 32, 0.96);
+}
+
+body[data-theme="dark"] .workflow-card--done {
+  background:
+    linear-gradient(180deg, rgba(16, 185, 129, 0.12), rgba(11, 18, 32, 0.96) 26%),
+    rgba(11, 18, 32, 0.96);
 }
 
 .task-detail-hero--status-warning {
@@ -2199,6 +2919,31 @@ a {
   backdrop-filter: blur(16px);
 }
 
+.Toastify__toast.taskflow-toast .Toastify__toast-body {
+  color: inherit;
+  font-weight: 700;
+}
+
+.Toastify__toast.taskflow-toast .Toastify__close-button {
+  color: inherit;
+  opacity: 0.78;
+}
+
+.Toastify__toast.taskflow-toast.Toastify__toast--success,
+.Toastify__toast.taskflow-toast.Toastify__toast--error,
+.Toastify__toast.taskflow-toast.Toastify__toast--info {
+  background: rgba(255, 255, 255, 0.97);
+  color: #14213d;
+}
+
+.Toastify__toast.taskflow-toast .Toastify__toast-icon {
+  color: inherit;
+}
+
+.Toastify__toast.taskflow-toast .Toastify__toast-icon svg {
+  fill: currentColor;
+}
+
 .Toastify__progress-bar {
   background: linear-gradient(90deg, #2563eb, #14b8a6);
 }
@@ -2277,6 +3022,10 @@ a {
     padding: 20px;
   }
 
+  .calendar-selectors {
+    grid-template-columns: 1fr;
+  }
+
 }
 
 @media (max-width: 767px) {
@@ -2287,8 +3036,19 @@ a {
 
   .dashboard-topbar__actions,
   .dashboard-topbar__actions .dashboard-action,
-  .dashboard-topbar__actions .ghost-button {
+  .dashboard-topbar__actions .calendar-connection-pill {
     width: 100%;
+  }
+
+  .dashboard-topbar__actions .page-help-trigger {
+    width: 42px;
+    min-width: 42px;
+    align-self: flex-start;
+  }
+
+  .dashboard-topbar__actions .calendar-connection-pill,
+  .dashboard-topbar__actions .dashboard-action {
+    justify-content: center;
   }
 
   .invitation-card {
@@ -2331,11 +3091,28 @@ a {
 
   .task-detail-hero,
   .task-detail-meta-grid,
-  .task-detail-flow {
+  .task-detail-flow,
+  .page-help__grid {
     grid-template-columns: 1fr;
   }
 
   .task-detail-hero {
+    flex-direction: column;
+  }
+
+  .onboarding {
+    grid-template-columns: 1fr;
+  }
+
+  .onboarding__mini-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .onboarding__hero {
+    padding: 22px;
+  }
+
+  .onboarding__actions {
     flex-direction: column;
   }
 

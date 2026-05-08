@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTheme } from "../contexts/ThemeContext";
 import "../css/Welcome.css";
 
 const featureCards = [
@@ -40,7 +41,49 @@ const workflowSteps = [
   },
 ];
 
+const planCards = [
+  {
+    name: "Free",
+    price: "Gratis",
+    note: "Para arrancar y organizar el trabajo esencial.",
+    badge: "Base",
+    features: [
+      "Tareas personales ilimitadas",
+      "Hasta 5 grupos",
+      "Calendario interno",
+      "Alertas del navegador",
+    ],
+  },
+  {
+    name: "Pro",
+    price: "$7 USD / mes",
+    note: "Para personas que quieren mas control y mas visibilidad.",
+    badge: "Mas elegido",
+    featured: true,
+    features: [
+      "Todo lo de Free",
+      "Sincronizacion completa con Google Calendar",
+      "Mas automatizaciones y recordatorios",
+      "Historial extendido y mejores analiticas",
+    ],
+  },
+  {
+    name: "Team",
+    price: "$19 USD / mes",
+    note: "Para equipos que necesitan coordinar trabajo compartido.",
+    badge: "Colaborativo",
+    features: [
+      "Todo lo de Pro",
+      "Controles avanzados para grupos",
+      "Mas espacios compartidos",
+      "Funciones premium para coordinacion del equipo",
+    ],
+  },
+];
+
 function Welcome() {
+  const { isDark, toggleTheme } = useTheme();
+
   return (
     <div className="welcome-page">
       <header className="welcome-hero">
@@ -54,6 +97,13 @@ function Welcome() {
           </div>
 
           <div className="welcome-nav__actions">
+            <button
+              type="button"
+              className="welcome-button welcome-button--ghost welcome-theme-toggle"
+              onClick={toggleTheme}
+            >
+              <i className={`bi ${isDark ? "bi-sun-fill" : "bi-moon-stars-fill"}`}></i>
+            </button>
             <Link to="/login" className="welcome-button welcome-button--ghost">
               Iniciar sesion
             </Link>
@@ -216,7 +266,55 @@ function Welcome() {
             </div>
           </div>
         </section>
+
+        <section className="welcome-section">
+          <div className="welcome-section__header">
+            <span className="welcome-pill welcome-pill--soft">Planes</span>
+            <h2>Una estructura simple para crecer contigo.</h2>
+            <p>
+              Por ahora los planes son informativos y te muestran una posible
+              evolucion del producto.
+            </p>
+          </div>
+
+          <div className="welcome-plans">
+            {planCards.map((plan) => (
+              <article
+                key={plan.name}
+                className={`welcome-plan-card ${plan.featured ? "welcome-plan-card--featured" : ""}`}
+              >
+                <span className="welcome-plan-card__badge">{plan.badge}</span>
+                <h3>{plan.name}</h3>
+                <strong>{plan.price}</strong>
+                <p>{plan.note}</p>
+                <ul>
+                  {plan.features.map((feature) => (
+                    <li key={feature}>
+                      <i className="bi bi-check2-circle"></i>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
       </main>
+
+      <footer className="welcome-footer">
+        <div className="welcome-footer__brand">
+          <strong>TaskFlow</strong>
+          <span>Proyecto hecho por Jose Blanquicett para organizar trabajo personal y colaborativo.</span>
+        </div>
+        <div className="welcome-footer__links">
+          <a href="https://github.com/Aokijij/Taskflow" target="_blank" rel="noreferrer">
+            Repositorio
+          </a>
+          <a href="https://github.com/Aokijij" target="_blank" rel="noreferrer">
+            Perfil GitHub
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

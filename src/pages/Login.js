@@ -21,14 +21,14 @@ function Login() {
       toast.success("Sesion iniciada correctamente", {
         position: "top-right",
         autoClose: 1500,
-        theme: "colored",
+        className: "taskflow-toast",
       });
       setTimeout(() => navigate("/task"), 1500);
     } catch (error) {
       toast.error(error.message || "No se pudo iniciar sesion.", {
         position: "top-right",
         autoClose: 3000,
-        theme: "colored",
+        className: "taskflow-toast",
       });
     } finally {
       setSubmitting(false);
@@ -50,7 +50,7 @@ function Login() {
       toast.error(googleMessage, {
         position: "top-right",
         autoClose: 4500,
-        theme: "colored",
+        className: "taskflow-toast",
       });
       setSubmitting(false);
     }

@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddTaskModal from "../components/AddTaskModal";
 import EditTaskModal from "../components/EditTaskModal";
+import PageHelpButton from "../components/PageHelpButton";
 import { useAuth } from "../contexts/AuthContext";
 import { useTasks } from "../contexts/TaskContext";
 import { getTaskCategories, getTaskStatus, isRecentlyCompleted } from "../utils/taskHelpers";
@@ -229,6 +230,27 @@ function Task() {
           </p>
         </div>
         <div className="dashboard-topbar__actions">
+          <PageHelpButton
+            title="Como usar Inicio"
+            intro="Esta vista resume tu espacio activo para que decidas rapido por donde empezar."
+            items={[
+              {
+                icon: "bi-speedometer2",
+                title: "Resumen rapido",
+                text: "Las tarjetas superiores te muestran total, pendientes, atrasadas y completadas. Puedes abrir vistas filtradas desde ahi.",
+              },
+              {
+                icon: "bi-funnel",
+                title: "Filtros del tablero",
+                text: "Usa categoria, estado y prioridad para quedarte solo con lo que quieres revisar ahora.",
+              },
+              {
+                icon: "bi-bullseye",
+                title: "En foco",
+                text: "La tarjeta destacada te lleva directo al detalle de la tarea que mas atencion necesita.",
+              },
+            ]}
+          />
           <button type="button" className="ghost-button" onClick={() => navigate("/groups")}>
             <i className="bi bi-people me-2"></i>Grupos
           </button>

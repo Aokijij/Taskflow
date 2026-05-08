@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import PageHelpButton from "../components/PageHelpButton";
 import { useTasks } from "../contexts/TaskContext";
 import { getCategorySummary, getTaskStatus } from "../utils/taskHelpers";
 
@@ -45,6 +46,29 @@ function Categories() {
           <p className="dashboard-topbar__subtitle">
             Organiza tus frentes de trabajo y entra rapido a cada lista con contexto propio.
           </p>
+        </div>
+        <div className="dashboard-topbar__actions">
+          <PageHelpButton
+            title="Como usar Categorias"
+            intro="Aqui tienes una lectura separada por frentes de trabajo para entrar a cada lista sin mezclar todo el tablero."
+            items={[
+              {
+                icon: "bi-tags",
+                title: "Categorias activas e inactivas",
+                text: "Una categoria sigue visible aunque se quede sin tareas, para que puedas reutilizarla mas adelante.",
+              },
+              {
+                icon: "bi-list-task",
+                title: "Listado dedicado",
+                text: "Al elegir una categoria ves solo sus tareas con una presentacion pensada para esa vista.",
+              },
+              {
+                icon: "bi-trash3",
+                title: "Limpieza segura",
+                text: "Las categorias inactivas pueden eliminarse solo cuando ya no tienen tareas relacionadas.",
+              },
+            ]}
+          />
         </div>
       </div>
 

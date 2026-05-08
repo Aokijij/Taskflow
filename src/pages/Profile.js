@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import PageHelpButton from "../components/PageHelpButton";
 import { supabase } from "../lib/supabaseClient";
 import { useAuth } from "../contexts/AuthContext";
 import { updateProfile } from "../services/profileService";
@@ -240,6 +241,27 @@ function Profile() {
           </p>
         </div>
         <div className="dashboard-topbar__actions">
+          <PageHelpButton
+            title="Como usar Perfil"
+            intro="En esta vista ajustas tu cuenta, revisas tu ritmo de trabajo y controlas configuraciones personales."
+            items={[
+              {
+                icon: "bi-person-badge",
+                title: "Informacion personal",
+                text: "Actualiza nombre, apellido y telefono para mantener tu cuenta lista para trabajar.",
+              },
+              {
+                icon: "bi-bell",
+                title: "Alertas",
+                text: "Activa o pausa las notificaciones del navegador desde la configuracion cuando quieras recibir menos interrupciones.",
+              },
+              {
+                icon: "bi-shield-lock",
+                title: "Seguridad",
+                text: "Cambia tu contrasena y administra el acceso a tu cuenta desde un mismo lugar.",
+              },
+            ]}
+          />
           <button
             type="button"
             className={`ghost-button profile-settings-toggle ${

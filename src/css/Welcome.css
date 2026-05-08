@@ -28,6 +28,14 @@
     linear-gradient(180deg, #f8fbff 0%, #eef4fb 46%, #f8fafc 100%);
 }
 
+body[data-theme="dark"] .welcome-page {
+  color: #e2e8f0;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 24%),
+    radial-gradient(circle at 86% 12%, rgba(20, 184, 166, 0.18), transparent 24%),
+    linear-gradient(180deg, #07101d 0%, #0b1424 46%, #09111e 100%);
+}
+
 .welcome-hero,
 .welcome-sections {
   width: min(1320px, calc(100% - 32px));
@@ -113,6 +121,12 @@
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(20, 33, 61, 0.08);
   box-shadow: none;
+}
+
+.welcome-theme-toggle {
+  min-width: 50px;
+  padding: 0;
+  font-size: 1.1rem;
 }
 
 .welcome-hero__content {
@@ -464,12 +478,216 @@
   box-shadow: 0 24px 42px rgba(15, 23, 42, 0.08);
 }
 
+.welcome-plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.welcome-plan-card {
+  display: grid;
+  gap: 14px;
+  padding: 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(20, 33, 61, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+}
+
+.welcome-plan-card--featured {
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.12), transparent 26%),
+    rgba(255, 255, 255, 0.9);
+  border-color: rgba(37, 99, 235, 0.16);
+  transform: translateY(-6px);
+}
+
+.welcome-plan-card__badge {
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.1);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.welcome-plan-card h3,
+.welcome-plan-card strong,
+.welcome-plan-card p,
+.welcome-plan-card ul {
+  margin: 0;
+}
+
+.welcome-plan-card h3 {
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.welcome-plan-card strong {
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.welcome-plan-card p {
+  color: #6b7a90;
+  line-height: 1.6;
+}
+
+.welcome-plan-card ul {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.welcome-plan-card li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #14213d;
+  line-height: 1.6;
+}
+
+.welcome-plan-card li i {
+  color: #10b981;
+  margin-top: 4px;
+}
+
+.welcome-footer {
+  width: min(1320px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 8px 0 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid rgba(20, 33, 61, 0.08);
+}
+
+.welcome-footer__brand,
+.welcome-footer__links {
+  display: flex;
+  gap: 18px;
+}
+
+.welcome-footer__brand {
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.welcome-footer__brand strong,
+.welcome-footer__brand span {
+  display: block;
+}
+
+.welcome-footer__brand strong {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.welcome-footer__brand span {
+  max-width: 560px;
+  color: #6b7a90;
+  line-height: 1.7;
+}
+
+.welcome-footer__links {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding-top: 20px;
+}
+
+.welcome-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(20, 33, 61, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  color: #1d4ed8;
+  font-weight: 900;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+}
+
+body[data-theme="dark"] .welcome-nav,
+body[data-theme="dark"] .welcome-hero__content,
+body[data-theme="dark"] .welcome-stat-card,
+body[data-theme="dark"] .welcome-feature-card,
+body[data-theme="dark"] .welcome-flow-card,
+body[data-theme="dark"] .welcome-highlight,
+body[data-theme="dark"] .welcome-plan-card,
+body[data-theme="dark"] .welcome-footer__links a {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.14);
+  color: #e2e8f0;
+}
+
+body[data-theme="dark"] .welcome-brand strong,
+body[data-theme="dark"] .welcome-hero__text h1,
+body[data-theme="dark"] .welcome-section__header h2,
+body[data-theme="dark"] .welcome-highlight h2,
+body[data-theme="dark"] .welcome-feature-card h3,
+body[data-theme="dark"] .welcome-flow-card strong,
+body[data-theme="dark"] .welcome-plan-card h3,
+body[data-theme="dark"] .welcome-plan-card strong,
+body[data-theme="dark"] .welcome-footer__brand strong,
+body[data-theme="dark"] .welcome-plan-card li,
+body[data-theme="dark"] .welcome-preview__headline strong,
+body[data-theme="dark"] .welcome-mini-card strong {
+  color: #f8fafc;
+}
+
+body[data-theme="dark"] .welcome-button--ghost {
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.72);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .welcome-brand small,
+body[data-theme="dark"] .welcome-hero__text p,
+body[data-theme="dark"] .welcome-section__header p,
+body[data-theme="dark"] .welcome-feature-card p,
+body[data-theme="dark"] .welcome-flow-card p,
+body[data-theme="dark"] .welcome-highlight p,
+body[data-theme="dark"] .welcome-plan-card p,
+body[data-theme="dark"] .welcome-footer__brand span,
+body[data-theme="dark"] .welcome-stat-card span,
+body[data-theme="dark"] .welcome-mini-card p,
+body[data-theme="dark"] .welcome-mini-card small {
+  color: #94a3b8;
+}
+
+body[data-theme="dark"] .welcome-preview__panel,
+body[data-theme="dark"] .welcome-mini-card {
+  background: rgba(15, 23, 42, 0.88);
+  color: #e2e8f0;
+}
+
+body[data-theme="dark"] .welcome-preview__headline,
+body[data-theme="dark"] .welcome-plan-card--featured {
+  background: rgba(8, 17, 32, 0.92);
+}
+
+body[data-theme="dark"] .welcome-highlight {
+  background:
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.16), transparent 26%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(11, 18, 32, 0.9));
+}
+
+body[data-theme="dark"] .welcome-footer {
+  border-top-color: rgba(148, 163, 184, 0.14);
+}
+
 @media (max-width: 1199px) {
   .welcome-hero__content,
   .welcome-section--workflow .welcome-flow,
   .welcome-feature-grid,
   .welcome-section--highlight .welcome-highlight,
-  .welcome-stats {
+  .welcome-stats,
+  .welcome-plans {
     grid-template-columns: 1fr;
   }
 }
@@ -490,6 +708,17 @@
   .welcome-nav__actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .welcome-footer {
+    width: min(100%, calc(100% - 24px));
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .welcome-footer__links {
+    justify-content: flex-start;
+    padding-top: 0;
   }
 
   .welcome-preview {

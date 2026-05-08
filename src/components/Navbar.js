@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import AppOnboarding from "./AppOnboarding";
 import { useAuth } from "../contexts/AuthContext";
 import { useTasks } from "../contexts/TaskContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { resolveUserAvatar } from "../utils/userHelpers";
 
 const navItems = [
@@ -52,6 +54,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { profile, user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const {
     groupedTasks,
     summary,
@@ -119,13 +122,24 @@ const Navbar = () => {
   };
 
   return (
-    <aside className={`dashboard-sidebar ${isMenuOpen ? "dashboard-sidebar--open" : ""}`}>
-      <div className="sidebar-brand">
+    <>
+      <AppOnboarding />
+      <aside className={`dashboard-sidebar ${isMenuOpen ? "dashboard-sidebar--open" : ""}`}>
+        <div className="sidebar-brand">
         <img src="/icon.jpg" alt="TaskFlow" />
         <div>
           <strong>TaskFlow</strong>
           <span>Workspace</span>
         </div>
+        <button
+          type="button"
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
+          title={isDark ? "Modo claro" : "Modo oscuro"}
+        >
+          <i className={`bi ${isDark ? "bi-sun-fill" : "bi-moon-stars-fill"}`}></i>
+        </button>
         <button
           type="button"
           className="sidebar-toggle"
@@ -305,7 +319,8 @@ const Navbar = () => {
         </button>
       </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

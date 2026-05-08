@@ -3,6 +3,7 @@ import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import PageHelpButton from "../components/PageHelpButton";
 import { useAuth } from "../contexts/AuthContext";
 import { useTasks } from "../contexts/TaskContext";
 
@@ -350,6 +351,27 @@ function Groups() {
           </p>
         </div>
         <div className="dashboard-topbar__actions">
+          <PageHelpButton
+            title="Como usar Grupos"
+            intro="Desde aqui gestionas espacios compartidos, invitaciones y el acceso a cada grupo."
+            items={[
+              {
+                icon: "bi-palette",
+                title: "Color por espacio",
+                text: "Cada grupo usa uno de los colores disponibles para que puedas identificarlo rapido dentro de la app.",
+              },
+              {
+                icon: "bi-person-plus",
+                title: "Entradas e invitaciones",
+                text: "Puedes invitar por correo o aprobar solicitudes por codigo si eres la persona propietaria del grupo.",
+              },
+              {
+                icon: "bi-gear",
+                title: "Gestion rapida",
+                text: "La tarjeta del grupo o el boton de gestionar abren un modal con miembros, cambios y permisos.",
+              },
+            ]}
+          />
           <button type="button" className="dashboard-action" onClick={() => setCreateModalOpen(true)}>
             <i className="bi bi-plus-circle me-2"></i>Crear o unirse
           </button>

@@ -11,7 +11,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import PageHelpButton from "./PageHelpButton";
 import { useTasks } from "../contexts/TaskContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 const COLORS = ["#2563eb", "#10b981", "#ef4444"];
 
@@ -41,6 +43,7 @@ function MeterCard({ label, value, total, note, tone = "primary" }) {
 
 function TaskStatistics() {
   const { tasks, loading, error, summary } = useTasks();
+  const { isDark } = useTheme();
 
   const { priorityData, statusData, categoryData } = useMemo(() => {
     const priorities = ["Alta", "Media", "Baja"];
@@ -78,6 +81,29 @@ function TaskStatistics() {
           <p className="dashboard-topbar__subtitle">
             Mide avance, carga activa y prioridades para decidir dónde poner atención.
           </p>
+        </div>
+        <div className="dashboard-topbar__actions">
+          <PageHelpButton
+            title="Como usar Estadisticas"
+            intro="Esta vista te ayuda a leer el comportamiento real de tu espacio y detectar donde se concentra el trabajo."
+            items={[
+              {
+                icon: "bi-graph-up-arrow",
+                title: "Medidores principales",
+                text: "Muestran proporcion de tareas completadas, pendientes, atrasadas y la carga de alta prioridad.",
+              },
+              {
+                icon: "bi-pie-chart",
+                title: "Distribucion visual",
+                text: "Los graficos te ayudan a detectar desbalances por estado y por prioridad sin revisar tarea por tarea.",
+              },
+              {
+                icon: "bi-tags",
+                title: "Categorias activas",
+                text: "Puedes ver en que frentes de trabajo se esta concentrando mas esfuerzo dentro del espacio actual.",
+              },
+            ]}
+          />
         </div>
       </div>
 
@@ -133,10 +159,31 @@ function TaskStatistics() {
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={priorityData}>
-                    <CartesianGrid strokeDasharray="4 4" stroke="rgba(20,33,61,0.08)" />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} />
-                    <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
-                    <Tooltip cursor={{ fill: "rgba(37, 99, 235, 0.06)" }} />
+                    <CartesianGrid
+                      strokeDasharray="4 4"
+                      stroke={isDark ? "rgba(148,163,184,0.14)" : "rgba(20,33,61,0.08)"}
+                    />
+                    <XAxis
+                      dataKey="name"
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: isDark ? "#cbd5e1" : "#6b7a90" }}
+                    />
+                    <YAxis
+                      allowDecimals={false}
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: isDark ? "#cbd5e1" : "#6b7a90" }}
+                    />
+                    <Tooltip
+                      cursor={{ fill: isDark ? "rgba(37, 99, 235, 0.12)" : "rgba(37, 99, 235, 0.06)" }}
+                      contentStyle={{
+                        borderRadius: 16,
+                        border: `1px solid ${isDark ? "rgba(148,163,184,0.14)" : "rgba(20,33,61,0.08)"}`,
+                        background: isDark ? "rgba(15,23,42,0.96)" : "rgba(255,255,255,0.96)",
+                        color: isDark ? "#e2e8f0" : "#14213d",
+                      }}
+                    />
                     <Bar dataKey="Cantidad" radius={[8, 8, 0, 0]}>
                       {priorityData.map((entry) => (
                         <Cell
@@ -179,7 +226,14 @@ function TaskStatistics() {
                         <Cell key={`${entry.name}-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip
+                      contentStyle={{
+                        borderRadius: 16,
+                        border: `1px solid ${isDark ? "rgba(148,163,184,0.14)" : "rgba(20,33,61,0.08)"}`,
+                        background: isDark ? "rgba(15,23,42,0.96)" : "rgba(255,255,255,0.96)",
+                        color: isDark ? "#e2e8f0" : "#14213d",
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="status-legend">

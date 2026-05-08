@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import PageHelpButton from "./PageHelpButton";
 import { useTasks } from "../contexts/TaskContext";
 import { supabase } from "../lib/supabaseClient";
 import {
@@ -223,6 +224,27 @@ const TaskCalendar = () => {
           </p>
         </div>
         <div className="dashboard-topbar__actions">
+          <PageHelpButton
+            title="Como usar Calendario"
+            intro="Aqui ves tus fechas del espacio activo y puedes mantenerlas coordinadas con tu agenda."
+            items={[
+              {
+                icon: "bi-google",
+                title: "Conexion con Google Calendar",
+                text: "Conecta tu calendario y sincroniza las tareas del espacio activo para llevar tus fechas a una agenda externa.",
+              },
+              {
+                icon: "bi-sliders",
+                title: "Filtros visuales",
+                text: "Cambia por estado, categoria o prioridad para quedarte con la parte del calendario que necesitas revisar.",
+              },
+              {
+                icon: "bi-lightning-charge",
+                title: "Detalle rapido",
+                text: "Al seleccionar una tarea puedes abrir su detalle completo sin salir del contexto del calendario.",
+              },
+            ]}
+          />
           <button
             type="button"
             className={`calendar-connection-pill ${

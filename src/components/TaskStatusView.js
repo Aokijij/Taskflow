@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import PageHelpButton from "./PageHelpButton";
 import { useTasks } from "../contexts/TaskContext";
 
 const getWorkflowClass = (task) => {
@@ -102,6 +103,29 @@ const TaskStatusView = () => {
           <p className="dashboard-topbar__subtitle">
             Mueve tareas por estado, consulta completadas y abre detalles cuando necesites contexto.
           </p>
+        </div>
+        <div className="dashboard-topbar__actions">
+          <PageHelpButton
+            title="Como usar Workflow"
+            intro="Esta vista separa tus tareas por estado para ayudarte a priorizar y avanzar sin ruido."
+            items={[
+              {
+                icon: "bi-kanban",
+                title: "Estados claros",
+                text: "Alterna entre pendientes, completadas y atrasadas para revisar exactamente el tramo del trabajo que quieres atacar.",
+              },
+              {
+                icon: "bi-arrows-move",
+                title: "Lectura rapida",
+                text: "El color y la apariencia de cada tarjeta cambian segun urgencia, vencimiento y cierre.",
+              },
+              {
+                icon: "bi-box-arrow-up-right",
+                title: "Accion directa",
+                text: "Puedes abrir el detalle o completar una tarea sin salir de esta vista.",
+              },
+            ]}
+          />
         </div>
       </div>
 

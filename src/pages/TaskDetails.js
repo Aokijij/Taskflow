@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import EditTaskModal from "../components/EditTaskModal";
+import PageHelpButton from "../components/PageHelpButton";
 import { useTasks } from "../contexts/TaskContext";
 import { getTaskCategories, getTaskStatus } from "../utils/taskHelpers";
 
@@ -183,9 +184,32 @@ const TaskDetails = () => {
           <h1>{task.name}</h1>
           <p>{getUrgencyCopy(task, status)}</p>
         </div>
-        <button type="button" className="ghost-button" onClick={() => navigate(-1)}>
-          Volver
-        </button>
+        <div className="task-detail-hero__actions">
+          <PageHelpButton
+            title="Como usar el detalle de tarea"
+            intro="Esta vista concentra toda la informacion clave para decidir, editar y cerrar una tarea con contexto."
+            items={[
+              {
+                icon: "bi-file-earmark-text",
+                title: "Contexto completo",
+                text: "Aqui ves descripcion, estado, fecha, prioridad, categoria y el espacio al que pertenece la tarea.",
+              },
+              {
+                icon: "bi-clock-history",
+                title: "Historial",
+                text: "Puedes revisar los movimientos recientes para entender como ha cambiado la tarea.",
+              },
+              {
+                icon: "bi-diagram-3",
+                title: "Relacionadas",
+                text: "Tambien tienes acceso rapido a otras tareas de la misma categoria para mantener continuidad.",
+              },
+            ]}
+          />
+          <button type="button" className="ghost-button" onClick={() => navigate(-1)}>
+            Volver
+          </button>
+        </div>
       </div>
 
       <div className="detail-grid detail-grid--rich">

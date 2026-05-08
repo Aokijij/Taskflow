@@ -125,7 +125,7 @@ function AddTaskModal({
                     }
                   >
                     {category}
-                    {inactiveMap[category]}
+                    {inactiveMap[category] ? " · Inactiva" : ""}
                   </button>
                 ))}
               </div>

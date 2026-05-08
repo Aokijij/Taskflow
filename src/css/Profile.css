@@ -161,6 +161,36 @@
   gap: 16px;
 }
 
+body[data-theme="dark"] .profile-avatar img {
+  border-color: rgba(148, 163, 184, 0.24);
+}
+
+body[data-theme="dark"] .profile-status-pill {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .profile-status-pill--active {
+  color: #6ee7b7;
+}
+
+body[data-theme="dark"] .profile-settings-toggle {
+  color: #e2e8f0;
+}
+
+body[data-theme="dark"] .profile-settings-toggle--active {
+  background: rgba(37, 99, 235, 0.16);
+  color: #93c5fd;
+}
+
+body[data-theme="dark"] .profile-setting-card {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+body[data-theme="dark"] .profile-toggle-button--selected-off {
+  color: #bfdbfe;
+  background: rgba(37, 99, 235, 0.16);
+}
+
 @media (max-width: 991px) {
   .profile-settings-grid,
   .profile-hero {

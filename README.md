@@ -1,70 +1,179 @@
-# Getting Started with Create React App
+# TaskFlow
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+TaskFlow es una aplicación de gestión de tareas construida con React y Supabase.  
+Está pensada para organizar trabajo personal y colaborativo en una interfaz moderna, visual y clara.
 
-## Available Scripts
+## Vista general
 
-In the project directory, you can run:
+TaskFlow permite:
 
-### `npm start`
+- Gestionar tareas personales y grupales.
+- Organizar tareas por estado, prioridad y categoría.
+- Trabajar con grupos compartidos e invitaciones.
+- Visualizar fechas en calendario.
+- Sincronizar tareas con Google Calendar.
+- Consultar estadísticas y workflow visual.
+- Recibir alertas del navegador para tareas próximas o atrasadas.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Funcionalidades principales
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Tareas personales
 
-### `npm test`
+- Crear, editar y eliminar tareas.
+- Asignar prioridad, fecha y categoría.
+- Ver tareas activas y completadas recientes.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Tareas grupales
 
-### `npm run build`
+- Crear grupos con color propio.
+- Invitar personas por correo.
+- Solicitar acceso por código.
+- Aprobar o rechazar entradas al grupo.
+- Asignar tareas a miembros del grupo.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Categorías persistentes
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Las categorías se mantienen incluso si se quedan sin tareas.
+- Las categorías inactivas pueden reutilizarse al crear nuevas tareas.
+- Una categoría sin tareas relacionadas puede eliminarse.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Workflow
 
-### `npm run eject`
+- Vista enfocada en tareas pendientes, completadas y atrasadas.
+- Tarjetas visuales con distinta urgencia según el estado.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Calendario
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Visualización mensual, semanal y diaria.
+- Filtros por estado, categoría y prioridad.
+- Conexión con Google Calendar.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Perfil
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Edición de datos personales.
+- Cambio de contraseña.
+- Configuración de alertas del navegador.
 
-## Learn More
+### Onboarding y ayuda contextual
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Onboarding inicial para nuevas personas usuarias.
+- Ayuda integrada en cada vista para explicar su función.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Stack del proyecto
 
-### Code Splitting
+- React
+- React Router
+- React Bootstrap
+- React Toastify
+- Recharts
+- FullCalendar
+- Supabase
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Estructura general
 
-### Analyzing the Bundle Size
+```bash
+src/
+  components/
+  contexts/
+  application/
+  infrastructure/
+  pages/
+  services/
+  utils/
+  css/
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+supabase/
+  functions/
+  schema.sql
+```
 
-### Making a Progressive Web App
+## Variables de entorno
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Crea un archivo `.env` en la raíz con:
 
-### Advanced Configuration
+```env
+REACT_APP_SUPABASE_URL=tu_supabase_url
+REACT_APP_SUPABASE_ANON_KEY=tu_supabase_anon_key
+REACT_APP_GOOGLE_CLIENT_ID=tu_google_client_id
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Instalación
 
-### Deployment
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Desarrollo local
 
-### `npm run build` fails to minify
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+La app corre en:
+
+[http://localhost:3000](http://localhost:3000)
+
+## Build de producción
+
+```bash
+npm run build
+```
+
+## Tests
+
+```bash
+npm test -- --watchAll=false
+```
+
+## Configuración de Supabase
+
+Para que la app funcione completa necesitas:
+
+- Crear el proyecto en Supabase.
+- Aplicar el archivo `supabase/schema.sql`.
+- Configurar autenticación con email/password.
+- Configurar Google OAuth si vas a usar Google Calendar o login con Google.
+- Desplegar las Edge Functions si vas a usar sincronización y recordatorios.
+
+## Sincronización con Google Calendar
+
+La integración usa:
+
+- OAuth con Google
+- Edge Functions de Supabase
+- Estado de conexión por usuario
+
+Funciones relacionadas:
+
+- `google-calendar-exchange`
+- `google-calendar-sync`
+- `send-task-reminders`
+
+## Estado actual del producto
+
+TaskFlow ya incluye:
+
+- Dashboard principal
+- Workflow
+- Calendario
+- Estadísticas
+- Perfil
+- Grupos
+- Categorías
+- Portada pública
+- Onboarding inicial
+
+## Próximas ideas
+
+- Planes premium reales
+- Más automatizaciones
+- Mejoras de notificaciones por correo
+- Más controles para grupos y permisos
+
+## Autor
+
+Proyecto realizado por **Jose Blanquicett**.
+
+GitHub:
+
+[https://github.com/Aokijij](https://github.com/Aokijij)
